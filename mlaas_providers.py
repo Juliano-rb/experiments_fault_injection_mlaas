@@ -1,7 +1,12 @@
 import azure_sentiment_analysis
 import random
 
+# microsoft
 def azure(dataset):
+    return azure_sentiment_analysis.classify_sentiments(dataset)
+
+
+def amazon(dataset):
     return azure_sentiment_analysis.classify_sentiments(dataset)
 
 def naive_classifier(dataset):
