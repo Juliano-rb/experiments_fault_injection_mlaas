@@ -128,11 +128,9 @@ def run_evaluation(x_dataset, y_labels,
 # Fonte: https://www.kaggle.com/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews
 df = pd.read_csv('./imdb_dataset.csv', encoding ='utf-8')
 
-df.head(5)
-
 # sample_size = int(input("Qual o tamanho da amostra?\n"))
 # Selecionando somente uma amostra dos dados
-sample_size = 2000
+sample_size = 50
 df = df.groupby('sentiment').apply(lambda x: x.sample(int(sample_size/2)))
 
 # Aplicando função de tratamento do texto nas revisões:
@@ -151,7 +149,7 @@ run_evaluation(
     noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3],
     # noise_levels=[0.1,  0.15],
     noise_algorithms=[noise_insertion.no_noise, noise_insertion.random_noise, noise_insertion.keyboard_aug, noise_insertion.ocr_aug],
-    mlaas_provider=providers.azure)
+    mlaas_provider=providers.naive_classifier)
 
 
 # fazer:
