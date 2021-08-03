@@ -111,7 +111,7 @@ def run_evaluation(x_dataset, y_labels,
             results.append(result)
     
     now = datetime.now()
-    timestamp = now.strftime("%m-%d-%Y %H:%M:%S")
+    timestamp = now.strftime("%m-%d-%Y %H_%M_%S")
     print(len(x_dataset))
     path = 'outputs/size'+str(len(x_dataset))+'_' + timestamp
     Path(path).mkdir(parents=True, exist_ok=True)
@@ -149,7 +149,7 @@ run_evaluation(
     noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3],
     # noise_levels=[0.1,  0.15],
     noise_algorithms=[noise_insertion.no_noise, noise_insertion.random_noise, noise_insertion.keyboard_aug, noise_insertion.ocr_aug],
-    mlaas_provider=providers.naive_classifier)
+    mlaas_provider=providers.amazon)
 
 
 # fazer:
