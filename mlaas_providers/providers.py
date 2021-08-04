@@ -1,12 +1,13 @@
-import azure_sentiment_analysis
+from .azure_sentiment_analysis import AzureSentimentAnalysis
 import random
 
 # microsoft
-from amazon_sentiment_analysis import AmazonSentimentAnalysis
+from .amazon_sentiment_analysis import AmazonSentimentAnalysis
 
 
 def azure(dataset):
-    return azure_sentiment_analysis.classify_sentiments(dataset)
+    azure = AzureSentimentAnalysis()
+    return azure.classify_sentiments(dataset)
 
 
 def amazon(dataset):
