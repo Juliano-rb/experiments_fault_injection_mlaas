@@ -7,7 +7,7 @@ import string
 import random
 from random import randrange
 from nlpaug.util import Action
-from custom_tokenizer import Tokenizer as custom_tokenizer
+from .custom_tokenizer import Tokenizer as custom_tokenizer
 
 import os
 
