@@ -12,10 +12,10 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import roc_auc_score
-import preprocessing as pre
-import noise_insertion
+from utils import preprocessing as pre
+from noise_insertion import noise_insertion
 from datetime import datetime
-import visualization
+from utils import visualization
 from pathlib import Path
 
 def calc_dataset_metrics(y_labels, predicted_labels):
