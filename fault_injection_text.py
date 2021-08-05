@@ -149,7 +149,7 @@ run_evaluation(
     noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3],
     # noise_levels=[0.1,  0.15],
     noise_algorithms=[noise_insertion.no_noise, noise_insertion.random_noise, noise_insertion.keyboard_aug, noise_insertion.ocr_aug],
-    mlaas_provider=providers.azure)
+    mlaas_provider=providers.google)
 
 
 # fazer:

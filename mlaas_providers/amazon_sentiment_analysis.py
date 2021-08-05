@@ -2,9 +2,10 @@ from time import sleep
 
 import boto3
 import credentials
+from mlaas_providers.sentiment_analysis import SentimentAnalysis
 
 
-class AmazonSentimentAnalysis:
+class AmazonSentimentAnalysis(SentimentAnalysis):
 
     def __init__(self):
         self.comprehend = boto3.client(service_name='comprehend',
@@ -13,20 +14,6 @@ class AmazonSentimentAnalysis:
                                        aws_secret_access_key=credentials.aws_secret_access_key)
 
         self.MAX_COMMENT_SIZE = 5000
-
-    def chunks(self, lst, n):
-        for i in range(0, len(lst), n):
-            yield lst[i:i + n]
-
-    def ensure_limits(self, batch):
-        safe_batch = []
-        for comment in batch:
-            if isinstance(comment, str) and len(comment) > 0:
-                if len(comment.encode('utf-8')) < 5000:
-                    safe_batch.append(comment)
-                else:
-                    safe_batch.append(comment[:(self.MAX_COMMENT_SIZE - 1)])
-        return safe_batch
 
     def call_service(self, batch):
         batch = self.ensure_limits(batch)
