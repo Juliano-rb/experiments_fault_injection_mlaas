@@ -128,7 +128,6 @@ def run_evaluation(x_dataset, y_labels,
 # Fonte: https://www.kaggle.com/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews
 df = pd.read_csv('./imdb_dataset.csv', encoding ='utf-8')
 
-# sample_size = int(input("Qual o tamanho da amostra?\n"))
 # Selecionando somente uma amostra dos dados
 sample_size = 50
 df = df.groupby('sentiment').apply(lambda x: x.sample(int(sample_size/2)))
