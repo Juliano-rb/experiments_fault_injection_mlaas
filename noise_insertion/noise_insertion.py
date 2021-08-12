@@ -78,30 +78,3 @@ def return_similarity(a,b):
     print("diff=", size-equals)
     print("percent=",str(equals/size))
     return equals/size
-# texts =["holy fuck, this is incredible.", "thanks mom, i like to drink this"]
-
-# ocr_aug(texts)
-
-
-
-
-# a = 'Hello world my name is berry allen'
-# a_joined = a.split(' ')
-# a_joined = '_'.join(a_joined)
-# print(a_joined)
-
-# percent = 0.20
-# chars = round(percent*len(a_joined))
-# aug = nac.KeyboardAug(aug_char_p=0.1, aug_char_min=1, aug_char_max=None, aug_word_min=1, aug_word_max=1)
-
-# aug = nac.RandomCharAug(aug_char_min=5, aug_char_max=5)
-
-# b = aug.augment(a_joined, n=1)
-# print(b)
-
-# b.split('-').join(' ')
-
-# b = random_noise()
-# print(a)
-# print(b)
-# return_similarity(a,b)
