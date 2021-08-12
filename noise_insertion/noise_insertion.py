@@ -11,28 +11,6 @@ from .custom_tokenizer import Tokenizer as custom_tokenizer
 
 import os
 
-def keyboard_aug_one(text, aug_level=0.3):
-    size = len(text)
-    char_aug = round(aug_level*size)
-    aug = nac.KeyboardAug(aug_char_min=1, aug_char_max=1, aug_word_min=1, aug_word_max=1)
-
-    for i in range(char_aug):
-        text = aug.augment(text, n=1)
-    
-    return text
-
-def insert_noise(text, noise_level):
-    size = len(text)
-    char_aug_qtd = round(noise_level*size)
-    for i in range(char_aug_qtd):
-        pos = randrange(size)
-        char = random.choice(string.ascii_letters)
-        chars = list(text)
-        chars[pos] = char
-        text = "".join(chars)
-
-    return text
-
 def keyboard_aug(text_lists,aug_level=0.3):
     augmented_texts = []
 
@@ -82,16 +60,6 @@ def random_noise(text_lists,aug_level=0.3):
         augmented_texts.append(augmented_text)
 
     return augmented_texts
-
-# def random_noise(text_lists,aug_level=0.3):
-#     augmented_texts = []
-
-#     for text in text_lists:
-#         augmented_text = insert_noise(text, aug_level)
-#         augmented_texts.append(augmented_text)
-    
-#     # print(augmented_texts)
-#     return augmented_texts
 
 def no_noise(text_lists, aug_level=0):
     return text_lists
