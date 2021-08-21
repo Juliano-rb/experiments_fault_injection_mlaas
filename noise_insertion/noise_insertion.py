@@ -105,7 +105,5 @@ def return_similarity(a,b):
         if(a[i]==b[i]):
             equals+=1
     
-    print("equals=",str(equals))
-    print("diff=", size-equals)
-    print("percent=",str(equals/size))
-    return equals/size
+    return {"equals": equals, "diff": size-equals,"similarity": equals/size}
+
