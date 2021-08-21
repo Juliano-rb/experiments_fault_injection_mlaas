@@ -7,9 +7,14 @@ import string
 import random
 from random import randrange
 from nlpaug.util import Action
-from .custom_tokenizer import Tokenizer as custom_tokenizer
 
 import os
+
+def tokenizer(text):
+    return [text]
+
+def reverse_tokenizer(token_list):
+    return ''.join(token_list).strip()
 
 def keyboard_aug(text_lists,aug_level=0.3):
     augmented_texts = []
@@ -17,8 +22,8 @@ def keyboard_aug(text_lists,aug_level=0.3):
     # aug = nac.KeyboardAug(aug_char_p=aug_level, aug_word_max=None, aug_word_p=1)
     aug = nac.KeyboardAug(aug_char_p=aug_level,
                       aug_char_max=None,
-                      tokenizer = custom_tokenizer.tokenizer,
-                      reverse_tokenizer=custom_tokenizer.reverse_tokenizer)
+                      tokenizer = tokenizer,
+                      reverse_tokenizer=reverse_tokenizer)
 
     for text in text_lists:
         size = len(text)
@@ -33,8 +38,9 @@ def keyboard_aug(text_lists,aug_level=0.3):
 def ocr_aug(text_lists, aug_level=0.3):
     aug = nac.OcrAug(aug_char_p=aug_level,
                     aug_char_max=None,
-                    tokenizer = custom_tokenizer.tokenizer,
-                    reverse_tokenizer=custom_tokenizer.reverse_tokenizer)
+                    aug_word_max=None,
+                    tokenizer = tokenizer,
+                    reverse_tokenizer=reverse_tokenizer)
 
     augmented_texts = []
 
