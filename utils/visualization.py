@@ -1,13 +1,28 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+from datetime import datetime
+from pathlib import Path
 
-def plot_results(results_array, filapah):
+def plot_results(results_array, size):
     df = pd.DataFrame(results_array)
-    df = df[['noise_algorithm','noise_level','acc', 'recall', 'precision']]
+    df = df[['provider', 'noise_algorithm','noise_level','acc', 'recall', 'precision']]
 
-    print(df.head())
+    now = datetime.now()
+    timestamp = now.strftime("%m-%d-%Y %H_%M_%S")
+    path = 'outputs/size'+str(size)+'_' + timestamp
 
-    for title, group in df.groupby('noise_algorithm'):
-        fig = group.plot(x='noise_level', title=title).get_figure()
-        fig.savefig(filapah+'/'+title)
-    plt.show()
+    for provider, group in df.groupby('provider'):
+        print(provider, ' ', group)
+        for title, group in df.groupby('noise_algorithm'):
+            dir = path + '/' + provider
+            Path(dir).mkdir(parents=True, exist_ok=True)
+
+            filename = dir + '/data.json'
+
+            f = open(filename, "w")
+            f.write(str(results_array))
+            f.close()
+
+            fig = group.plot(x='noise_level', title=title).get_figure()
+            fig.savefig(dir+'/'+title)
+        plt.show()
