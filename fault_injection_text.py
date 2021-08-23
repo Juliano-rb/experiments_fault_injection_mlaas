@@ -63,6 +63,7 @@ def print_metrics(metrics_dict):
     print(f'Accuracy = {acc} ## Precision = {precision} ## Recall = {recall} ## AUC = {auc}')
     print('----------------------------------------------------------------------------------')
 
+# TODO Desacoplar e limpar codigo
 def run_evaluation(x_dataset, y_labels,
                   noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3],
                   noise_algorithms=[noise_insertion.no_noise, noise_insertion.random_noise, noise_insertion.keyboard_aug, noise_insertion.ocr_aug],
