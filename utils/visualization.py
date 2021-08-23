@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from pathlib import Path
 
+# TODO: melhorar design
 def plot_results(results_array, size):
     df = pd.DataFrame(results_array)
     df = df[['provider', 'noise_algorithm','noise_level','acc', 'recall', 'precision']]
@@ -13,7 +14,7 @@ def plot_results(results_array, size):
 
     for provider, group in df.groupby('provider'):
         print(provider, ' ', group)
-        for title, group in df.groupby('noise_algorithm'):
+        for title, group in group.groupby('noise_algorithm'):
             dir = path + '/' + provider
             Path(dir).mkdir(parents=True, exist_ok=True)
 
