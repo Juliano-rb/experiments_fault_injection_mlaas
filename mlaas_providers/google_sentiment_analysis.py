@@ -22,7 +22,7 @@ class GoogleSentimentAnalysis(SentimentAnalysis):
         request_queue = RequestQueue(function_to_call=call_google_sentiment,
                                     iterate_args=documents,
                                     fixed_args=[self.client, result_queque],
-                                    request_rate_min=600)
+                                    call_rate=600)
         request_queue.run()
 
         results = []
