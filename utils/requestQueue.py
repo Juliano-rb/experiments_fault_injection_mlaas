@@ -32,5 +32,4 @@ class RequestQueue():
     def print_queue(self):
         while not self.data_queue.empty():
             data = self.data_queue.get()
-            print(data)
             self.take_a_nap()
