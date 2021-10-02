@@ -12,3 +12,4 @@ class SentimentAnalysis:
                 else:
                     safe_batch.append(comment[:(self.MAX_COMMENT_SIZE - 1)])
         return safe_batch
+
