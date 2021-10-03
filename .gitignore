@@ -5,3 +5,5 @@ credentials.py
 venv
 google-credentials.json
 europarl
+sample.csv
+state.json
