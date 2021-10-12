@@ -126,6 +126,9 @@ def run_evaluation(x_dataset, y_labels,
 # Fonte: https://www.kaggle.com/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews
 df = pd.read_csv('./imdb_dataset.csv', encoding ='utf-8')
 
+if (len(sys.argv) > 1):
+    clean_state()
+
 prev_state = get_previous_state()
 if prev_state is not None:
     df = pd.read_csv('sample.csv', encoding='utf-8')
