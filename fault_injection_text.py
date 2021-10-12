@@ -6,6 +6,7 @@
 
 # Importando os pacotes
 import pandas as pd
+import sys, os
 from mlaas_providers import providers
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.metrics import accuracy_score
@@ -17,6 +18,12 @@ from noise_insertion import noise_insertion
 from utils import visualization
 from utils.state import update_state, get_previous_state
 
+def clean_state():
+    print('* cleaning up state...')
+    if os.path.exists('state.json'):
+        os.remove('state.json')
+    if os.path.exists('sample.csv'):
+        os.remove('sample.csv')
 
 def calc_dataset_metrics(y_labels, predicted_labels):
 
