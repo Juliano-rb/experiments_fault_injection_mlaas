@@ -29,8 +29,8 @@ def clean_state():
 def calc_dataset_metrics(y_labels, predicted_labels):
 
     # Transformando os labels em númericos para analise de metricas:
-    y_labels_binary = list(map(lambda x: 0 if x=='negative' else 1, y_labels))
-    predicted_binary = list(map(lambda x: 0 if x=='negative' else 1, predicted_labels))
+    y_labels_binary = list(map(lambda x: 0 if x in('negative', 0) else 1, y_labels))
+    predicted_binary = list(map(lambda x: 0 if x in('negative', 0) else 1, predicted_labels))
 
     acc = accuracy_score(y_labels_binary,predicted_binary)
     recall = recall_score(y_labels_binary,predicted_binary)
