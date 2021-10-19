@@ -13,6 +13,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import roc_auc_score
+from sklearn.metrics import confusion_matrix
 from utils import preprocessing as pre
 from noise_insertion import noise_insertion
 from utils import visualization
@@ -28,16 +29,16 @@ def clean_state():
 def calc_dataset_metrics(y_labels, predicted_labels):
 
     # Transformando os labels em númericos para analise de metricas:
-    lb = LabelBinarizer()
-    y_labels_binary = lb.fit_transform(y_labels)
-    predicted_binary = lb.fit_transform(predicted_labels)
+    y_labels_binary = list(map(lambda x: 0 if x=='negative' else 1, y_labels))
+    predicted_binary = list(map(lambda x: 0 if x=='negative' else 1, predicted_labels))
 
     acc = accuracy_score(y_labels_binary,predicted_binary)
     recall = recall_score(y_labels_binary,predicted_binary)
     precision = precision_score(y_labels_binary,predicted_binary)
     auc = roc_auc_score(y_labels_binary,predicted_binary)
+    confusion_m = confusion_matrix(y_labels_binary, predicted_binary)
 
-    return (acc, recall, precision, auc)
+    return (acc, recall, precision, auc, confusion_m)
 
 
 def generate_noised_dataset(x, noise_level, noise_func):
@@ -107,12 +108,13 @@ def run_evaluation(x_dataset, y_labels,
                     prev_noised_dataset = None
                 predicted_labels = get_prediction_results(noised_dataset, provider)
                 
-                acc, recall, precision, auc = calc_dataset_metrics(y_labels,predicted_labels)
+                acc, recall, precision, auc, confusion_m = calc_dataset_metrics(y_labels,predicted_labels)
 
                 result = {'provider':provider.__name__,
                         'noise_algorithm':algorithm.__name__,
                         'noise_level':0 if algorithm.__name__ == 'no_noise' else level,
-                        'acc':acc, 'recall':recall, 'precision': precision, 'auc': auc
+                        'acc':acc, 'recall':recall, 'precision': precision, 'auc': auc,
+                        'confusion_matrix': confusion_m.tolist()
                 }
                 print('#####',result)
                 results.append(result)
@@ -136,7 +138,6 @@ else:
     # Selecionando somente uma amostra dos dados
     sample_size = 10
     df = df.groupby('sentiment').apply(lambda x: x.sample(int(sample_size/2)))
-
     # Aplicando função de tratamento do texto nas revisões:
     df['review'] = df['review'].apply(pre.denoise_text)
 
