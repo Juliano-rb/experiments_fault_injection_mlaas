@@ -26,11 +26,17 @@ def plot_results(results_array, size):
             f.write(str(results_array))
             f.close()
 
-            save_confusion_matrix(group, dir, provider, title)
+            save_confusion_matrix(group,dir, provider, title )
+
+    for provider, group in df.groupby('provider'):
+        for title, group in group.groupby('noise_algorithm'):
+            dir = path + '/' + provider
+            Path(dir).mkdir(parents=True, exist_ok=True)
 
             save_results_plot(group, dir, title)
 
         plt.show()
+    plt.clf()
 
 def save_confusion_matrix(group, dir, provider, noise):
     for noise_level, group in group.groupby('noise_level'):
@@ -48,9 +54,8 @@ def save_confusion_matrix(group, dir, provider, noise):
         fig = ax.get_figure()
         Path(dir+'/confusion_matrix').mkdir(parents=True, exist_ok=True)
 
-        fig.savefig(dir+'/confusion_matrix/'+fig_title+'.png') 
-        
-        plt.show()
+        fig.savefig(dir+'/confusion_matrix/'+fig_title+'.png')
+        plt.clf()
 
 def save_results_plot(df,dir, noise):
     fig2 = df.plot(x='noise_level', title=noise).get_figure()
