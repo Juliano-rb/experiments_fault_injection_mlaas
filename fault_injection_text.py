@@ -149,10 +149,6 @@ X = df['review'].tolist()
 dataset_label = df['sentiment'].tolist()
 
 
-# similaridade = return_similarity(X[0], noised[0])
-
-# print(similaridade)
-
 run_evaluation(
     X, dataset_label,
     noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3],

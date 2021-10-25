@@ -5,7 +5,6 @@ from pathlib import Path
 import numpy as np
 import seaborn as sn
 
-# TODO: melhorar design
 def plot_results(results_array, size):
     df = pd.DataFrame(results_array)
     df = df[['provider', 'noise_algorithm','noise_level','acc', 'recall', 'precision', 'confusion_matrix']]
