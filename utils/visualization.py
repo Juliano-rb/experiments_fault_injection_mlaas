@@ -38,7 +38,7 @@ def save_confusion_matrix(df, main_path):
 
                 df_cm = pd.DataFrame(cm, index=['Negative', 'Positive'],
                                             columns=['Negative', 'Positive'])
-                ax = sn.heatmap(df_cm, cmap='Oranges', annot=True)
+                ax = sn.heatmap(df_cm, cmap='Oranges', annot=True, fmt='d')
                 fig_title = provider + ' '+noise + ' ' + str(noise_level)
 
                 plt.title(fig_title)
@@ -47,7 +47,7 @@ def save_confusion_matrix(df, main_path):
                 fig = ax.get_figure()
                 Path(dir+'/confusion_matrix').mkdir(parents=True, exist_ok=True)
 
-                fig.savefig(dir+'/confusion_matrix/'+fig_title+'.png')
+                fig.savefig(dir+'/confusion_matrix/'+noise+'/'+fig_title+'.png')
                 plt.clf()
 
 def save_results_plot(df,main_path):
