@@ -27,7 +27,6 @@ def clean_state():
         os.remove('sample.csv')
 
 def calc_dataset_metrics(y_labels, predicted_labels):
-
     # Transformando os labels em númericos para analise de metricas:
     y_labels_binary = list(map(lambda x: 0 if x in('negative', 0) else 1, y_labels))
     predicted_binary = list(map(lambda x: 0 if x in('negative', 0) else 1, predicted_labels))
@@ -73,6 +72,34 @@ def print_metrics(metrics_dict):
     print(f'Accuracy = {acc} ## Precision = {precision} ## Recall = {recall} ## AUC = {auc}')
     print('----------------------------------------------------------------------------------')
 
+'''
+@param state: dict {
+        "current_provider": int,
+        "current_algo": int,
+        "current_noise_level": int,
+    }
+@param setup: dict {
+        "noise_levels": list<float>,
+        "noise_algoritms": list<functions>,
+        "mlaas_providers": list<function>
+    }
+'''
+def next_step(state, setup):
+    next_state = dict(state)
+    if state["current_noise_level"] < len(setup["noise_levels"])-1:
+        next_state["current_noise_level"] = state["current_noise_level"] + 1
+    else:
+        next_state["current_noise_level"] = 0
+        if state["current_algo"] < len(setup["noise_algoritms"])-1:
+            next_state["current_algo"] = state["current_algo"] + 1
+        else:
+            next_state["current_noise_level"] = 0
+            next_state["current_algo"] = 0
+            if state["current_provider"] < len(setup["mlaas_providers"])-1:
+                next_state["current_provider"] = state["current_provider"] + 1
+    
+    return next_state
+
 # TODO Desacoplar e limpar codigo
 def run_evaluation(x_dataset, y_labels,
                   noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3],
@@ -84,11 +111,17 @@ def run_evaluation(x_dataset, y_labels,
     noise_count = 0
     prev_noised_dataset = None
     if prev_state:
-        results = prev_state['results']
-        provider_count = prev_state['current_provider']
-        algo_count = prev_state['current_algo']
-        noise_count = prev_state['current_noise_level']
-        prev_noised_dataset = prev_state.get('noised_dataset')
+        next_state = next_step(prev_state, {
+            "noise_levels": noise_levels,
+            "noise_algoritms": noise_algorithms,
+            "mlaas_providers": mlaas_providers
+        })
+
+        results = next_state['results']
+        provider_count = next_state['current_provider']
+        algo_count = next_state['current_algo']
+        noise_count = next_state['current_noise_level']
+        prev_noised_dataset = next_state.get('noised_dataset')
     if prev_state:
         print('Restoring from previous state. Provider:', mlaas_providers[provider_count], 'Algo:', noise_algorithms[algo_count], 'Noise:', noise_levels[noise_count])
 
@@ -151,7 +184,7 @@ dataset_label = df['sentiment'].tolist()
 
 run_evaluation(
     X, dataset_label,
-    noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3],
-    # noise_levels=[0.1,  0.15],
+    noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.40, 0.45, 0.50, 0.6],
     noise_algorithms=[noise_insertion.no_noise, noise_insertion.random_noise, noise_insertion.keyboard_aug, noise_insertion.ocr_aug, noise_insertion.char_swap_noise],
-    mlaas_providers=[providers.azure, providers.naive_classifier], prev_state=prev_state)
+    mlaas_providers=[providers.azure, providers.naive_classifier],
+    prev_state=prev_state)
