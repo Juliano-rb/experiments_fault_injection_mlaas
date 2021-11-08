@@ -5,13 +5,9 @@ from pathlib import Path
 import numpy as np
 import seaborn as sn
 
-def plot_results(results_array, size):
+def plot_results(results_array, main_path):
     df = pd.DataFrame(results_array)
     df = df[['provider', 'noise_algorithm','noise_level','acc', 'recall', 'precision', 'confusion_matrix']]
-
-    now = datetime.now()
-    timestamp = now.strftime("%m-%d-%Y %H_%M_%S")
-    main_path = 'outputs/size'+str(size)+'_' + timestamp
 
     save_results_to_file(results_array, main_path)
     save_confusion_matrix(df, main_path)

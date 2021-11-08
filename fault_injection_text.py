@@ -17,7 +17,8 @@ from sklearn.metrics import confusion_matrix
 from utils import preprocessing as pre
 from noise_insertion import noise_insertion
 from utils import visualization
-from utils.state import update_state, get_previous_state
+from utils.state import update_state, get_previous_state, save_noised_dataset_snapshot
+from datetime import datetime
 
 def clean_state():
     print('* cleaning up state...')
@@ -100,11 +101,18 @@ def next_step(state, setup):
     
     return next_state
 
+def get_main_path(size):
+    now = datetime.now()
+    timestamp = now.strftime("%m-%d-%Y %H_%M_%S")
+    main_dir = 'outputs/size'+str(size)+'_' + timestamp
+    return main_dir
+
 # TODO Desacoplar e limpar codigo
 def run_evaluation(x_dataset, y_labels,
                   noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3],
                   noise_algorithms=[noise_insertion.no_noise, noise_insertion.random_noise, noise_insertion.keyboard_aug, noise_insertion.ocr_aug],
                   mlaas_providers=[providers.naive_classifier], prev_state=None):
+    path = get_main_path(len(x_dataset))
     results = []
     provider_count = 0
     algo_count = 0
@@ -151,11 +159,16 @@ def run_evaluation(x_dataset, y_labels,
                 }
                 print('#####',result)
                 results.append(result)
+                save_noised_dataset_snapshot(provider.__name__,
+                    algorithm.__name__,
+                    0 if algorithm.__name__ == 'no_noise' else level,
+                    noised_dataset,
+                    path)
                 update_state(i, j, k, noised_dataset, results)
                 if noise_algorithms[j] == noise_insertion.no_noise:
                     break
 
-    visualization.plot_results(results, len(x_dataset))
+    visualization.plot_results(results, path)
 
 # Importanto os dados relacionados a classificação de sentimentos em revisão de filmes.
 # Fonte: https://www.kaggle.com/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews
