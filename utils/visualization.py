@@ -9,9 +9,18 @@ def plot_results(results_array, main_path):
     df = pd.DataFrame(results_array)
     df = df[['provider', 'noise_algorithm','noise_level','acc', 'recall', 'precision', 'confusion_matrix']]
 
+
+    save_results_to_excel_file(df, main_path)
     save_results_to_file(results_array, main_path)
     save_confusion_matrix(df, main_path)
     save_results_plot(df, main_path)
+
+def save_results_to_excel_file(df, main_path):
+    Path(main_path).mkdir(parents=True, exist_ok=True)
+
+    filename = main_path + '/data_excel.xlsx'
+
+    df.to_excel(filename, 'results')
 
 def save_results_to_file(results_array, main_path):
     Path(main_path).mkdir(parents=True, exist_ok=True)
