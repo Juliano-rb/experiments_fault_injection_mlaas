@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-@author: juliano-rb
+@authors:
+- github.com/juliano-rb
+- github.com/amorim
 """
 
 # Importando os pacotes

@@ -57,7 +57,9 @@ def random_noise(text_lists,aug_level=0.3):
     aug = nac.RandomCharAug(aug_char_p=aug_level,
                     aug_char_max=None,
                     tokenizer = tokenizer,
-                    reverse_tokenizer=reverse_tokenizer)
+                    reverse_tokenizer=reverse_tokenizer,
+                    spec_char='!@#$%^&*()_+.' #checar se inclui o ponto
+                    )
 
     augmented_texts = []
 
