@@ -13,7 +13,7 @@ class AmazonSentimentAnalysis(SentimentAnalysis):
                                        aws_access_key_id=credentials.aws_access_key_id,
                                        aws_secret_access_key=credentials.aws_secret_access_key)
 
-        self.MAX_COMMENT_SIZE = 5000
+        self.MAX_COMMENT_SIZE = 4998
 
     def call_service(self, batch):
         batch = self.ensure_limits(batch)
