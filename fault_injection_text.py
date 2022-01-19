@@ -110,6 +110,19 @@ def get_main_path(size):
     return main_dir
 
 # TODO Desacoplar e limpar codigo
+''' Passos desejados:
+1. Gerar o ruídos:
+   .Entrada = Dataset inteiro
+   .Saída = dataset.csv amostragem do dataset, dataset-0.X.csv para cada noise aplicado
+    --sizeX_Timestamp
+    ----data
+    ------original
+    --------dataset.csv
+    ------ocr
+    --------dataset-0.1.csv, dataset-0.2.csv,...
+
+
+'''
 def run_evaluation(x_dataset, y_labels,
                   noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3],
                   noise_algorithms=[noise_insertion.no_noise, noise_insertion.random_noise, noise_insertion.keyboard_aug, noise_insertion.ocr_aug],
