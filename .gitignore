@@ -7,3 +7,4 @@ google-credentials.json
 europarl
 sample.csv
 state.json
+models/lambda/out
