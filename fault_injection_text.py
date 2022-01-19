@@ -184,7 +184,7 @@ if prev_state is not None:
     df = pd.read_csv('sample.csv', encoding='utf-8')
 else:
     # Selecionando somente uma amostra dos dados
-    sample_size = 10
+    sample_size = 200
     df = df.groupby('sentiment').apply(lambda x: x.sample(int(sample_size/2)))
     # Aplicando função de tratamento do texto nas revisões:
     df['review'] = df['review'].apply(pre.denoise_text)
@@ -197,9 +197,32 @@ X = df['review'].tolist()
 dataset_label = df['sentiment'].tolist()
 
 
+# visualization.plot_results(prev_state['results'], '2000 clean 3')
+
+noise_list =[
+    noise_insertion.keyboard_aug,
+    noise_insertion.ocr_aug,
+    noise_insertion.random_noise,
+    noise_insertion.char_swap_noise,
+    noise_insertion.aug.AntonymAug,
+    noise_insertion.aug.RandomWordAug,
+    noise_insertion.aug.SpellingAug,
+    noise_insertion.aug.SplitAug,
+    noise_insertion.aug.SynonymAug,
+    noise_insertion.aug.TfldfAug,
+    noise_insertion.aug.ReservedAug,
+    noise_insertion.aug.AbstSummAug,
+    noise_insertion.aug.RandomSentAug,
+    noise_insertion.aug.WordEmbsAug,
+    noise_insertion.aug.ContextualWordEmbsAug,
+    noise_insertion.aug.ContextualWordEmbsForSentenceAug
+    # noise_insertion.aug.BackTranslation,
+    # noise_insertion.aug.LambadaAug,
+]
+
 run_evaluation(
     X, dataset_label,
-    noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.40, 0.45, 0.50, 0.6],
-    noise_algorithms=[noise_insertion.no_noise, noise_insertion.random_noise, noise_insertion.keyboard_aug, noise_insertion.ocr_aug, noise_insertion.char_swap_noise],
-    mlaas_providers=[providers.azure, providers.naive_classifier],
+    noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.40, 0.6, 0.8, 0.9],
+    noise_algorithms=noise_list,
+    mlaas_providers=[providers.naive_classifier],
     prev_state=prev_state)
