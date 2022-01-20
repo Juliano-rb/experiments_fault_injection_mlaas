@@ -110,7 +110,7 @@ def get_main_path(size):
     return main_dir
 
 # TODO Desacoplar e limpar codigo
-''' Passos desejados:
+''' Passos desejados para refatoramento:
 1. Gerar o ruídos:
    .Entrada = Dataset inteiro
    .Saída = dataset.csv amostragem do dataset, dataset-0.X.csv para cada noise aplicado
@@ -120,8 +120,28 @@ def get_main_path(size):
     --------dataset.csv
     ------ocr
     --------dataset-0.1.csv, dataset-0.2.csv,...
-
-
+2. Obter predições:
+   .Entrada = Arquivos da pasta data
+   .Saída = resultado da atual funcao get_prediction_results
+    --sizeX_Timestamp
+    ----predictions
+    -----original
+    -------predictions.txt
+    -----ocr
+    -------predictions-0.1.csv, predictions-0.2.csv,...
+3. Calcular métricas:
+   .Entrada = Arquivos da pasta data e predictions
+   .Saída = métricas de calc_dataset_metrics em arquivos na pasta results/metrics
+    --sizeX_Timestamp
+    ----results
+    ------metrics
+3. Gerar gráficos e arquivos de resultados:
+   .Entrada = Arquivos da pasta results/metrics
+   .Saída = gráficos e um arquivo csv (ou json) com os resultados
+    --sizeX_Timestamp
+    ----results
+    ----results.csv
+    ----graficos similar ao q ja é feito
 '''
 def run_evaluation(x_dataset, y_labels,
                   noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3],
