@@ -1,0 +1,21 @@
+{
+    // Use o IntelliSense para saber mais sobre os atributos possíveis.
+    // Focalizar para exibir as descrições dos atributos existentes.
+    // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Continue FROM - Arquivo Atual",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "args": ["-continue_from", "size20_01-26-2022 21_13_27"]
+        },
+        {
+            "name": "Python: Arquivo Atual",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+        }
+    ]
+}

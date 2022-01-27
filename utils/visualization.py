@@ -9,7 +9,6 @@ def plot_results(results_array, main_path):
     df = pd.DataFrame(results_array)
     df = df[['provider', 'noise_algorithm','noise_level','acc', 'recall', 'precision', 'confusion_matrix']]
 
-
     save_results_to_excel_file(df, main_path)
     save_results_to_file(results_array, main_path)
     save_confusion_matrix(df, main_path)
@@ -70,24 +69,23 @@ RQ1
 eixo x: nivel de noise 
 eixo y: f-measure de cada noise
 '''
-def save_results_plot_RQ1(data,main_path):
+def save_results_plot_RQ1(data,main_path, noise_levels):
     df = pd.DataFrame(data)
     df_rq1 = df[['provider', 'noise_level', 'fmeasure','noise_algorithm']]
     for provider, group in df_rq1.groupby('provider'):
         group = group[group['noise_algorithm'] != 'no_noise']
+        # setup axis
         fig, ax = plt.subplots()
         plt.xlabel("noise levels")
         plt.ylabel("f-measure")
-        plt.xlim(0.1, 0.9)
-        plt.ylim(0.1, 0.9)
+        ax.set_xticks(noise_levels)
+        ax.set_xlim(0.1, max(noise_levels))
+        ax.set_ylim(0, 1)
+
         dir = main_path + '/' + provider
         Path(dir).mkdir(parents=True, exist_ok=True)
         for algorithm in group['noise_algorithm'].unique():
-            print('algorithm', algorithm)
-            print('group: ', group)
-
             sample = group[group['noise_algorithm'] == algorithm]
-            print('sample', sample)
             fig2 = sample.plot(ax=ax, xlabel='noise level', x='noise_level', y='fmeasure', title=provider, label=algorithm).get_figure()
         fig2.savefig(dir+'/'+provider)
         # plt.show()
@@ -99,24 +97,23 @@ RQ2
 eixo x nivel de noise 
 eixo y: f-measure para provedor 
 '''
-def save_results_plot_RQ2(data,main_path):
+def save_results_plot_RQ2(data,main_path, noise_levels):
     df = pd.DataFrame(data)
     df_rq2 = df[['provider', 'noise_level', 'fmeasure','noise_algorithm']]
     group = df_rq2[df_rq2['noise_algorithm'] != 'no_noise']
     for noise, group in df_rq2.groupby('noise_algorithm'):
+        # setup axis
         fig, ax = plt.subplots()
         plt.xlabel("noise levels")
         plt.ylabel("f-measure")
-        plt.xlim(0.1, 0.9)
-        plt.ylim(0.1, 0.9)
+        ax.set_xticks(noise_levels)
+        ax.set_xlim(0.1, max(noise_levels))
+        ax.set_ylim(0, 1)
+
         dir = main_path + '/' + noise
         Path(dir).mkdir(parents=True, exist_ok=True)
         for provider in group['provider'].unique():
-            print('provider', provider)
-            print('group: ', group)
-
             sample = group[group['provider'] == provider]
-            print('sample', sample)
             fig2 = sample.plot(ax=ax, xlabel='noise level', x='noise_level', y='fmeasure', title=noise, label=provider).get_figure()
         fig2.savefig(dir+'/'+noise)
         # plt.show()
