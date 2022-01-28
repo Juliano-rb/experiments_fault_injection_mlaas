@@ -4,6 +4,14 @@ import sys
 from time import sleep
 import credentials
 
+def map_sentiment(result):
+    if(result.sentiment=='negative'):
+        return 'negative'
+    elif result.sentiment=='positive':
+        return 'positive'
+    else:
+        return 'neutral'
+
 class AzureSentimentAnalysis:
     def __init__(self):
         self.azure_text_analytics = self.authenticate_client()
@@ -25,7 +33,9 @@ class AzureSentimentAnalysis:
         # print(result)
         doc_result = [doc for doc in result if not doc.is_error]
 
-        sentiments = ['positive' if d.confidence_scores.positive > d.confidence_scores.negative else 'negative'  for d in doc_result] 
+        sentiments = list(map(map_sentiment, doc_result))
+
+        # sentiments = ['positive' if d.confidence_scores.positive > d.confidence_scores.negative else 'negative'  for d in doc_result] 
         return sentiments
             
     # chama o servico de classificação azure em grupos de 10 em 10
