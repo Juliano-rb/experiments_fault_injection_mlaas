@@ -6,6 +6,7 @@ from utils.requestQueue import RequestQueue
 text_type = language_v1.Document.Type.PLAIN_TEXT
 
 def call_google_sentiment(review, client, result_queue):
+    # docs: cloud.google.com/natural-language/docs/basics
     document = language_v1.Document(content=review, type_=text_type, language="EN")
     result = client.analyze_sentiment(request={'document': document})
     result_data = {'sentiment': 'positive' if result.document_sentiment.score >= 0 else 'negative'}
@@ -28,6 +29,7 @@ class GoogleSentimentAnalysis(SentimentAnalysis):
         results = []
         for i in range(len(documents)):
             results.append(result_queque.get())
+        
         results = list(map(lambda r: r['sentiment'], results))
         
         return results

@@ -17,6 +17,7 @@ class AmazonSentimentAnalysis(SentimentAnalysis):
 
     def call_service(self, batch):
         batch = self.ensure_limits(batch)
+        # docs: https://docs.aws.amazon.com/comprehend/latest/dg/API_BatchDetectSentiment.html
         result = self.comprehend.batch_detect_sentiment(TextList=batch, LanguageCode='en')
         result = list(map(lambda r: 'positive' if r['SentimentScore']['Positive'] > r['SentimentScore']['Negative'] else 'negative', result['ResultList']))
         return result
