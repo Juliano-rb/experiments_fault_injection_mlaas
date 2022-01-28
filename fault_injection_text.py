@@ -49,6 +49,7 @@ def load_dataset_sample(dataset_name, size):
     # Importanto os dados relacionados a classificação de sentimentos em revisão de filmes.
     # Fonte: https://www.kaggle.com/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews
     df = pd.read_csv(dataset_name, encoding ='utf-8')
+    df.rename(columns={'airline_sentiment': 'sentiment', 'text': 'review'}, inplace=True)
 
     df = df.groupby('sentiment').apply(lambda x: x.sample(int(size/2)))
     # Aplicando função de tratamento do texto nas revisões:
@@ -88,9 +89,10 @@ def run_evaluation(x_dataset, y_labels,
     visualization.plot_results(metrics_results, main_path + '/results/others_plots')
 
 args = parse_args()
-sample_size = 20
+sample_size = 5
 
-X, Y = load_dataset_sample('./imdb_dataset.csv', sample_size)
+# X, Y = load_dataset_sample('./imdb_dataset.csv', sample_size)
+X, Y = load_dataset_sample('./Tweets_dataset.csv', sample_size)
 
 noise_list =[
     noises.keyboard_aug,
@@ -100,9 +102,9 @@ noise_list =[
 
 run_evaluation(
     X, Y,
-    noise_levels=[0.8],
+    noise_levels=[0.1, 0.8],
     noise_algorithms=noise_list,
-    mlaas_providers=[providers.azure, providers.google, providers.amazon ],
+    mlaas_providers=[providers.google, providers.azure, providers.amazon],
     continue_from=args.continue_from
 )
 
