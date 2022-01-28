@@ -5,17 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: Debugger project",
+            "type": "python",
+            "request": "launch",
+            "program": "fault_injection_text.py",
+        },
+        {
             "name": "Python: Continue FROM - Arquivo Atual",
             "type": "python",
             "request": "launch",
             "program": "${file}",
             "args": ["-continue_from", "size20_01-26-2022 21_13_27"]
-        },
-        {
-            "name": "Python: Arquivo Atual",
-            "type": "python",
-            "request": "launch",
-            "program": "${file}",
         }
     ]
 }

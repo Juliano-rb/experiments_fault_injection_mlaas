@@ -100,9 +100,9 @@ noise_list =[
 
 run_evaluation(
     X, Y,
-    noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3],
+    noise_levels=[0.8],
     noise_algorithms=noise_list,
-    mlaas_providers=[providers.naive_classifier],
+    mlaas_providers=[providers.azure, providers.google, providers.amazon ],
     continue_from=args.continue_from
 )
 
