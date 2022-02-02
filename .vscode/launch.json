@@ -11,11 +11,11 @@
             "program": "fault_injection_text.py",
         },
         {
-            "name": "Python: Continue FROM - Arquivo Atual",
+            "name": "Python: Continue FROM",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
-            "args": ["-continue_from", "size20_01-26-2022 21_13_27"]
+            "program": "fault_injection_text.py",
+            "args": ["-continue_from", "size9_01-28-2022 08_52_19"]
         }
     ]
 }
