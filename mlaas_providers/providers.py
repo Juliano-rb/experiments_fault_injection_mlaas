@@ -24,14 +24,23 @@ def amazon(dataset):
     return amazon.classify(dataset)
 
 def naive_classifier(dataset):
+    possible_results =['negative', 'neutral', 'positive']
     result = []
     for i in range(len(dataset)):
-        result.append(random.randint(0, 1))
+        result_index = random.randint(-1, 1) 
+        result.append( possible_results[result_index])
 
     # print(result)
     return result
 
 ###############################
+def read_dataset(dataset_path):
+    dataset = pd.read_excel(dataset_path)
+    dataset_list = dataset.values.tolist()
+    dataset_list = [line[0] for line in dataset_list]
+
+    return dataset_list
+
 def save_data_to_file(data, path, file_name):
     df = pd.DataFrame(data, columns =['sentiment'])
     file_name = file_name+'.xlsx'
@@ -59,6 +68,15 @@ def get_available_noise_levels(noive_levels_progress):
 
     return noise_levels_filtered
 
+def persist_predictions(provider_algo, noise, nlevel,predicted, main_path, progress):
+    path = main_path + '/predictions/' + provider_algo.__name__ + '/' + noise
+    file_name = 'predictions-'+nlevel
+    save_data_to_file(predicted, path, file_name)
+
+    progress["predictions"][provider_algo.__name__][noise][str(nlevel)]=path+'/'+file_name+".xlsx"
+    progress_manager.save_progress(main_path, progress)
+    return progress
+
 def get_prediction_results(main_path):
     progress = progress_manager.load_progress(main_path)
 
@@ -69,10 +87,30 @@ def get_prediction_results(main_path):
     noise_data = progress['noise']
     for provider_algo in providers:
         print('-',provider_algo.__name__)
+
         noise_algorithms = list(progress["predictions"][provider_algo.__name__].keys())
+        try:
+            noise_algorithms.remove('no_noise')
+        except:
+            pass
+
+        # testar isso aqui antes
+        # get predictions to no-noise one time for entire provider
+        # todo: isolar isso de alguma forma
+        if(progress["predictions"][provider_algo.__name__]["no_noise"]["0.0"]==None):
+            print('--','no noise')
+            no_noise_path = main_path + "/data/dataset.xlsx"
+            no_noise_dataset = read_dataset(no_noise_path)
+            no_noise_predictions = provider_algo(no_noise_dataset)
+            persist_predictions(provider_algo, "no_noise", "0.0",
+                                no_noise_predictions, main_path, progress )
+        no_noise_predict_path = main_path + '/predictions/' + provider_algo.__name__ + '/no_noise/predictions-0.0.xlsx'
+        no_noise_predictions = read_dataset(no_noise_predict_path)
+
         for noise in noise_algorithms:
             print('--', noise)
-            noise_levels_data = list(noise_data[noise].keys())
+
+            persist_predictions(provider_algo, noise, "0.0", no_noise_predictions, main_path, progress )
             ## buscar aqui
             noise_levels_available = progress["predictions"][provider_algo.__name__][noise]
             noise_levels_available = get_available_noise_levels(noise_levels_available)
@@ -80,17 +118,9 @@ def get_prediction_results(main_path):
                 print('---', nlevel)
                 dataset_path = noise_data[noise][str(nlevel)]
 
-                dataset = pd.read_excel(dataset_path)
-                dataset_list = dataset.values.tolist()
-                dataset_list = [line[0] for line in dataset_list]
+                dataset = read_dataset(dataset_path)
+                predicted = provider_algo(dataset)
 
-                predicted = provider_algo(dataset_list)
-
-                path = main_path + '/predictions/' + provider_algo.__name__ + '/' + noise
-                file_name = 'predictions-'+str(nlevel)
-                save_data_to_file(predicted, path, file_name)
-
-                progress["predictions"][provider_algo.__name__][noise][str(nlevel)]=path+'/'+file_name+".xlsx"
-                progress_manager.save_progress(main_path, progress)
+                progress = persist_predictions(provider_algo, noise, str(nlevel), predicted, main_path, progress)
 
     return progress

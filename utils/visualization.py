@@ -40,8 +40,8 @@ def save_confusion_matrix(df, main_path):
                 cm = group['confusion_matrix'].iloc[0]
                 cm = np.array(cm)
 
-                df_cm = pd.DataFrame(cm, index=['Negative', 'Positive'],
-                                            columns=['Negative', 'Positive'])
+                df_cm = pd.DataFrame(cm, index=['Negative', 'Neutral', 'Positive'],
+                                            columns=['Negative', 'Neutral', 'Positive'])
                 ax = sn.heatmap(df_cm, cmap='Oranges', annot=True, fmt='d')
                 fig_title = provider + ' '+noise + ' ' + str(noise_level)
 
@@ -59,6 +59,8 @@ def save_results_plot(df,main_path):
         for noise, group in group.groupby('noise_algorithm'):
             dir = main_path + '/' + provider
             Path(dir).mkdir(parents=True, exist_ok=True)
+
+            group = group.sort_values(by=['noise_level'], ascending=True)
 
             fig2 = group.plot(x='noise_level', title=noise).get_figure()
             fig2.savefig(dir+'/'+noise)
@@ -79,13 +81,14 @@ def save_results_plot_RQ1(data,main_path, noise_levels):
         plt.xlabel("noise levels")
         plt.ylabel("f-measure")
         ax.set_xticks(noise_levels)
-        ax.set_xlim(0.1, max(noise_levels))
+        ax.set_xlim(0, max(noise_levels))
         ax.set_ylim(0, 1)
 
         dir = main_path + '/' + provider
         Path(dir).mkdir(parents=True, exist_ok=True)
         for algorithm in group['noise_algorithm'].unique():
             sample = group[group['noise_algorithm'] == algorithm]
+            sample = sample.sort_values(by=['noise_level'], ascending=True)
             fig2 = sample.plot(ax=ax, xlabel='noise level', x='noise_level', y='fmeasure', title=provider, label=algorithm).get_figure()
         fig2.savefig(dir+'/'+provider)
         # plt.show()
@@ -114,6 +117,7 @@ def save_results_plot_RQ2(data,main_path, noise_levels):
         Path(dir).mkdir(parents=True, exist_ok=True)
         for provider in group['provider'].unique():
             sample = group[group['provider'] == provider]
+            sample = sample.sort_values(by=['noise_level'], ascending=True)
             fig2 = sample.plot(ax=ax, xlabel='noise level', x='noise_level', y='fmeasure', title=noise, label=provider).get_figure()
         fig2.savefig(dir+'/'+noise)
         # plt.show()

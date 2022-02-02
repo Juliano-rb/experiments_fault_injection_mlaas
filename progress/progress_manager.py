@@ -29,7 +29,9 @@ def init_progress(main_path, noise_algorithms, noise_levels, ml_providers):
     providers = {}
     for p in ml_providers:
         providers[p.__name__]=dict(noises)
-    
+        providers[p.__name__]["no_noise"] = {"0.0": None}  
+     
+     
     progress["predictions"]=dict(providers)
     
     save_progress(main_path, progress)

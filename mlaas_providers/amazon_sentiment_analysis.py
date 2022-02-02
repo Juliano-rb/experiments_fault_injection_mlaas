@@ -4,7 +4,13 @@ import boto3
 import credentials
 from mlaas_providers.sentiment_analysis import SentimentAnalysis
 
-
+def map_sentiment(sentiment):
+    if(sentiment['Sentiment']=='POSITIVE'):
+        return 'positive'
+    elif sentiment['Sentiment']=='NEGATIVE':
+        return 'negative'
+    else:
+        return 'neutral'
 class AmazonSentimentAnalysis(SentimentAnalysis):
 
     def __init__(self):
@@ -19,7 +25,8 @@ class AmazonSentimentAnalysis(SentimentAnalysis):
         batch = self.ensure_limits(batch)
         # docs: https://docs.aws.amazon.com/comprehend/latest/dg/API_BatchDetectSentiment.html
         result = self.comprehend.batch_detect_sentiment(TextList=batch, LanguageCode='en')
-        result = list(map(lambda r: 'positive' if r['SentimentScore']['Positive'] > r['SentimentScore']['Negative'] else 'negative', result['ResultList']))
+        result = list(map(map_sentiment, result['ResultList']))
+
         return result
 
     def classify(self, documents):

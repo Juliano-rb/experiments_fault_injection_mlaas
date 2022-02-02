@@ -49,8 +49,9 @@ def load_dataset_sample(dataset_name, size):
     # Importanto os dados relacionados a classificação de sentimentos em revisão de filmes.
     # Fonte: https://www.kaggle.com/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews
     df = pd.read_csv(dataset_name, encoding ='utf-8')
+    df.rename(columns={'airline_sentiment': 'sentiment', 'text': 'review'}, inplace=True)
 
-    df = df.groupby('sentiment').apply(lambda x: x.sample(int(size/2)))
+    df = df.groupby('sentiment').apply(lambda x: x.sample(int(size/3)))
     # Aplicando função de tratamento do texto nas revisões:
     df['review'] = df['review'].apply(pre.denoise_text)
 
@@ -81,29 +82,49 @@ def run_evaluation(x_dataset, y_labels,
     print('Calculating metrics...')
     metrics_results = metrics.metrics(progress, y_labels, main_path)
 
+    noise_list = [0.0]
+    noise_list.extend(noise_levels)
     visualization.save_results_plot_RQ1(metrics_results,
-        main_path + '/results/rq1', noise_levels)
+        main_path + '/results/rq1', noise_list)
     visualization.save_results_plot_RQ2(metrics_results,
-        main_path + '/results/rq2', noise_levels)
+        main_path + '/results/rq2', noise_list)
     visualization.plot_results(metrics_results, main_path + '/results/others_plots')
 
 args = parse_args()
-sample_size = 20
+sample_size = 498
 
-X, Y = load_dataset_sample('./imdb_dataset.csv', sample_size)
+# X, Y = load_dataset_sample('./imdb_dataset.csv', sample_size)
+X, Y = load_dataset_sample('./Tweets_dataset.csv', sample_size)
 
 noise_list =[
     noises.keyboard_aug,
     noises.ocr_aug,
-    noises.random_noise
+    # noises.random_noise,
+    # noises.char_swap_noise,
+    # noises.aug.AntonymAug,
+    # noises.aug.RandomWordAug,
+    # noises.aug.SpellingAug,
+    # noises.aug.SplitAug,
+    # noises.aug.SynonymAug,
+    # noises.aug.TfldfAug,
+    # noises.aug.ReservedAug,
+    # noises.aug.RandomSentAug,
+    # noises.aug.WordEmbsAug,
+    # noises.aug.ContextualWordEmbsAug
+
+    # noises.aug.AbstSummAug,
+    # noises.aug.ContextualWordEmbsForSentenceAug
+    # noise_insertion.aug.BackTranslation, # error
+    # noise_insertion.aug.LambadaAug # error
 ]
 
 run_evaluation(
     X, Y,
-    noise_levels=[0.8],
+    noise_levels=[0.1, 0.15, 0.2],#, 0.25, 0.3, 0.35, 0.40, 0.6, 0.8, 0.9],
     noise_algorithms=noise_list,
-    mlaas_providers=[providers.azure, providers.google, providers.amazon ],
+    mlaas_providers=[providers.naive_classifier],#/providers.google, providers.azure, providers.amazon],
     continue_from=args.continue_from
+    
 )
 
 # falta testar o progresso e replicar como ta nos noises nos providers
