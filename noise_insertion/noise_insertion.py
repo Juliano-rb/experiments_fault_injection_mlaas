@@ -35,9 +35,11 @@ def save_data_to_file(data, path, file_name):
 def get_noise_instances(func_names, functions_obj):
     functions = []
     for name in func_names:
-        function = getattr(functions_obj, name)
+        try:
+            function = getattr(functions_obj, name)
+        except:
+            function = getattr(functions_obj.aug, name)
         functions.append(function)
-    
     return functions
 
 # get available noises for especified algorithm
@@ -65,6 +67,7 @@ def generate_noised_data(x_dataset, main_path):
         print('-',algorithm_name)
         noise_levels = get_noise_levels(progress, algorithm_name)
 
+        progress["noise"][algorithm_name]["0.0"]= main_path + "/data/dataset.xlsx"
         for k in range(0, len(noise_levels)):
             level = noise_levels[k]
             print('--', level)

@@ -100,13 +100,6 @@ def WordEmbsAug(text_lists, aug_level=0.3):
 
     return augmented_texts
 
-def BackTranslation(text_lists, aug_level=0.3):
-    aug = naw.BackTranslationAug(device='cpu', max_length=200, batch_size=1, force_reload=True)
-
-    augmented_texts = aug.augment(text_lists, n=1, num_thread=0)
-
-    return augmented_texts
-
 ## apenas faz a substituição de palavras, não usarei
 def ReservedAug(text_lists, aug_level=0.3):
     aug = naw.ReservedAug(reserved_tokens=[],aug_min=0, aug_max=None, aug_p=aug_level,tokenizer=tokenizer,
@@ -116,16 +109,29 @@ def ReservedAug(text_lists, aug_level=0.3):
 
     return augmented_texts
 
+def RandomSentAug(text_lists, aug_level=0.3):
+    aug = nas.RandomSentAug(aug_p=aug_level, aug_min=0, aug_max=0, tokenizer=tokenizer)
+
+    augmented_texts = aug.augment(text_lists, n=1, num_thread=5)
+
+    return augmented_texts
+
+def OBackTranslation(text_lists, aug_level=0.3):
+    aug = naw.BackTranslationAug(device='cpu', max_length=200, batch_size=1, force_reload=True)
+
+    augmented_texts = aug.augment(text_lists, n=1, num_thread=0)
+
+    return augmented_texts
 # sentence augmenters
 # gpt2? wtf
-def ContextualWordEmbsForSentenceAug(text_lists, aug_level=0.3):
+def OContextualWordEmbsForSentenceAug(text_lists, aug_level=0.3):
     aug = nas.ContextualWordEmbsForSentenceAug(min_length=0, model_type='gpt2')
 
     augmented_texts = aug.augment(text_lists, n=1, num_thread=5)
 
     return augmented_texts
 
-def AbstSummAug(text_lists, aug_level=0.3):
+def OAbstSummAug(text_lists, aug_level=0.3):
     text_lists = [t[0:512] for t in text_lists]
 
     aug = nas.AbstSummAug(min_length=0)
@@ -134,15 +140,8 @@ def AbstSummAug(text_lists, aug_level=0.3):
 
     return augmented_texts
 
-def LambadaAug(text_lists, aug_level=0.3):
+def OLambadaAug(text_lists, aug_level=0.3):
     aug = nas.LambadaAug(model_dir='./models/lambda/out', min_length=0)
-
-    augmented_texts = aug.augment(text_lists, n=1, num_thread=5)
-
-    return augmented_texts
-
-def RandomSentAug(text_lists, aug_level=0.3):
-    aug = nas.RandomSentAug(aug_p=aug_level, aug_min=0, aug_max=0, tokenizer=tokenizer)
 
     augmented_texts = aug.augment(text_lists, n=1, num_thread=5)
 

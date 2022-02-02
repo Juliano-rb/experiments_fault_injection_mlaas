@@ -4,6 +4,7 @@ from sklearn.metrics import precision_score
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import multilabel_confusion_matrix
 from pathlib import Path
 import json
 import pandas as pd
@@ -14,17 +15,28 @@ def save_metrics_to_file(main_path, metrics):
     with open(main_path+'/metrics.json', 'w') as f:
         json.dump(metrics, f)
 
+def map_input(value):
+    if value == 'negative':
+        return -1
+    if value == 'positive':
+        return 1
+    if value == 'neutral':
+        return 0
+
+    return None
+
 def calc_dataset_metrics(y_labels, predicted_labels):
     # Transformando os labels em númericos para analise de metricas:
-    y_labels_binary = list(map(lambda x: 0 if x in('negative', 0) else 1, y_labels))
-    predicted_binary = list(map(lambda x: 0 if x in('negative', 0) else 1, predicted_labels))
-
+    y_labels_binary = list(map(map_input, y_labels))
+    predicted_binary = list(map(map_input, predicted_labels))
+    # adicionar parametro average_precision_score 
     acc = accuracy_score(y_labels_binary,predicted_binary)
-    recall = recall_score(y_labels_binary,predicted_binary)
-    precision = precision_score(y_labels_binary,predicted_binary)
-    auc = roc_auc_score(y_labels_binary,predicted_binary)
-    fmeasure = f1_score(y_labels_binary,predicted_binary)
+    recall = recall_score(y_labels_binary,predicted_binary, average="weighted")
+    precision = precision_score(y_labels_binary,predicted_binary, average="weighted")
+    auc = None #roc_auc_score(y_labels_binary,(predicted_binary, 3), multi_class="ovr", average="weighted") precisa de ajustes para multi class
+    fmeasure = f1_score(y_labels_binary,predicted_binary, average="weighted")
     confusion_m = confusion_matrix(y_labels_binary, predicted_binary)
+    # confusion_m_mult = multilabel_confusion_matrix(y_labels_binary, predicted_binary) #, labels=["ne", "bird", "cat"]
 
     return (acc, recall, precision, auc, fmeasure, confusion_m)
 

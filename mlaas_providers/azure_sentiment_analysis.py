@@ -52,10 +52,9 @@ class AzureSentimentAnalysis:
         for c in chunks:
             print('\rAzure: '+str(count) + '/'+str(len(documents)), end='')
             result = self.sentiment_analysis_with_opinion_mining(c)
-            # print(count,'/', len(documents),'...\r', sep=None)
             results.extend(result)
             count += len(c)
-            # sleep(5)
+            sleep(60)
 
-        print("\n")
+        print("\r",)
         return results
