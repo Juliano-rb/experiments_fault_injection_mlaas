@@ -84,6 +84,8 @@ def metrics(progress, y_labels, main_path):
                 predictions_path = progress['predictions'][provider][noise][str(level)] ## ta dando erro aqui
                 predictions = load_predictions(predictions_path)
 
+                if len(y_labels) != len(predictions):
+                    print('inconsistent values at: ', provider, noise, level)
                 acc, recall, precision, auc, fmeasure, confusion_m = calc_dataset_metrics(y_labels,predictions)
                 result = {'provider':provider,
                         'noise_algorithm':noise,
