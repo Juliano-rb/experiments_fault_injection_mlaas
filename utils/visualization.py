@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 import numpy as np
 import seaborn as sn
+import itertools
 
 def plot_results(results_array, main_path):
     df = pd.DataFrame(results_array)
@@ -80,17 +81,19 @@ def save_results_plot_RQ1(data,main_path, noise_levels):
         fig, ax = plt.subplots()
         plt.xlabel("noise levels")
         plt.ylabel("f-measure")
-        ax.set_xticks(noise_levels)
+        xticks = [round(x* 0.10,2) for x in range(0,10)]
+        ax.set_xticks(xticks)
         ax.set_xlim(0, max(noise_levels))
         ax.set_ylim(0, 1)
+        markers = itertools.cycle(['>', '+', '.', 'o', '*', 's'])
 
-        dir = main_path + '/' + provider
+        dir = main_path
         Path(dir).mkdir(parents=True, exist_ok=True)
         for algorithm in group['noise_algorithm'].unique():
             sample = group[group['noise_algorithm'] == algorithm]
             sample = sample.sort_values(by=['noise_level'], ascending=True)
-            fig2 = sample.plot(ax=ax, xlabel='noise level', x='noise_level', y='fmeasure', title=provider, label=algorithm).get_figure()
-        fig2.savefig(dir+'/'+provider)
+            fig2 = sample.plot(ax=ax, marker =next(markers), xlabel='noise level', x='noise_level', y='fmeasure', title=provider, label=algorithm).get_figure()
+        fig2.savefig(dir)
         # plt.show()
         plt.clf()
 
@@ -109,16 +112,17 @@ def save_results_plot_RQ2(data,main_path, noise_levels):
         fig, ax = plt.subplots()
         plt.xlabel("noise levels")
         plt.ylabel("f-measure")
-        ax.set_xticks(noise_levels)
+        xticks = [round(x* 0.10,2) for x in range(0,10)]
+        ax.set_xticks(xticks)
         ax.set_xlim(0.1, max(noise_levels))
         ax.set_ylim(0, 1)
 
-        dir = main_path + '/' + noise
+        dir = main_path
         Path(dir).mkdir(parents=True, exist_ok=True)
         for provider in group['provider'].unique():
             sample = group[group['provider'] == provider]
             sample = sample.sort_values(by=['noise_level'], ascending=True)
             fig2 = sample.plot(ax=ax, xlabel='noise level', x='noise_level', y='fmeasure', title=noise, label=provider).get_figure()
-        fig2.savefig(dir+'/'+noise)
+        fig2.savefig(dir)
         # plt.show()
         plt.clf()
