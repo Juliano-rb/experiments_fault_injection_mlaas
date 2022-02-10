@@ -3,6 +3,8 @@ from azure.core.credentials import AzureKeyCredential
 import sys
 from time import sleep
 import credentials
+import queue
+from utils.requestQueue import RequestQueue
 
 def map_sentiment(result):
     if(result.sentiment=='negative'):
@@ -28,33 +30,54 @@ class AzureSentimentAnalysis:
                 credential=ta_credential)
         return text_analytics_client
 
-    def sentiment_analysis_with_opinion_mining(self, documents):
-        result = self.azure_text_analytics.analyze_sentiment(documents, show_opinion_mining=True)
-        # print(result)
-        doc_result = [doc for doc in result if not doc.is_error]
+    def sentiment_analysis_with_opinion_mining(self, data, client, result_queue):
+        try:
+            print('\r'+str(len(result_queue.queue)), end='')
+            result = client.analyze_sentiment(data["documents"], show_opinion_mining=True)
+            # print(result)
+            doc_result = [doc for doc in result if not doc.is_error]
 
-        sentiments = list(map(map_sentiment, doc_result))
+            sentiments = list(map(map_sentiment, doc_result))
 
-        # sentiments = ['positive' if d.confidence_scores.positive > d.confidence_scores.negative else 'negative'  for d in doc_result] 
-        return sentiments
-            
+            result_queue.put({"predictions":sentiments, "index":data["index"]})
+        except Exception as e:
+            print("Error:", e)
+            print(data["documents"])
+            raise e
+
+    def arrange_results(self, result_list):
+        result_list.sort(key=lambda x: x["index"], reverse=False)
+
+        data = list(map(lambda x: x["predictions"], result_list))
+        data = [item for sublist in data for item in sublist]
+
+        return data
+
     # chama o servico de classificação azure em grupos de 10 em 10
-    def classify_sentiments(self, documents):
-        # client = self.authenticate_client()
-
+    def classify_sentiments(self, documents, call_rate_param=20):
         chunks = []
         results = []
         for i in range(0, len(documents), 10):
             chunk = documents[i:i+10]
-            chunks.append(chunk)
+            chunks.append({"documents":chunk, "index": i})
 
-        count = 0
-        for c in chunks:
-            print('\rAzure: '+str(count) + '/'+str(len(documents)), end='')
-            result = self.sentiment_analysis_with_opinion_mining(c)
-            results.extend(result)
-            count += len(c)
-            sleep(60)
+        result_queque = queue.Queue()
+        request_queue = RequestQueue(function_to_call=self.sentiment_analysis_with_opinion_mining,
+                                    iterate_args=chunks,
+                                    fixed_args=[self.azure_text_analytics, result_queque],
+                                    call_rate=call_rate_param)
+        request_queue.run()
+        if len(result_queque.queue) != len(chunks):
+            raise "uma das threads deu erro"
 
-        print("\r",)
-        return results
+        print('\r', end='')
+
+        results = []
+        while len(result_queque.queue)>0:
+            # for i in range(len(documents)):
+            data = result_queque.get()
+            results.append(data)
+
+        arranged = self.arrange_results(results)
+
+        return arranged
