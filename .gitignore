@@ -1,13 +1,1 @@
-outputs/
-__pycache__
-credentials.py
-.idea
-venv
-google-credentials.json
-europarl
-sample.csv
-state.json
-models/lambda/out
-models/cbow_s300.txt
-.tmp*/
-desktop.ini
+.tmp.driveupload
