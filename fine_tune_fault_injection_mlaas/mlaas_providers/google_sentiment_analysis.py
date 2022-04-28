@@ -42,7 +42,6 @@ class GoogleSentimentAnalysis(SentimentAnalysis):
         self.MAX_COMMENT_SIZE = 5000
 
     def classify(self, documents):
-        
         documents = [{"document":doc, "index": i} for i,doc in enumerate(documents)]# dict
 
         result_queque = queue.Queue()
