@@ -1,4 +1,6 @@
+from typing import List
 import nlpaug.augmenter.char as nac
+import nlpaug.augmenter.word as naw
 
 def tokenizer(text):
     return [text]
@@ -6,10 +8,10 @@ def tokenizer(text):
 def reverse_tokenizer(token_list):
     return ''.join(token_list).strip()
 
-def OCR_Aug(text_lists, char_to_alter=4):
+def OCR_Aug(text_lists, unit_to_alter=4):
     aug = nac.OcrAug(
-                    aug_char_min=char_to_alter,
-                    aug_char_max=char_to_alter,
+                    aug_char_min=unit_to_alter,
+                    aug_char_max=unit_to_alter,
                     # aug_char_p=None,
                     # aug_word_p=None,
                     # aug_word_min=0,
@@ -27,10 +29,10 @@ def OCR_Aug(text_lists, char_to_alter=4):
 
     return augmented_texts
 
-def Keyboard_Aug(text_lists, char_to_alter=4):
+def Keyboard_Aug(text_lists, unit_to_alter=4) -> List[str]:
     aug = nac.KeyboardAug(
-                    aug_char_min=char_to_alter,
-                    aug_char_max=char_to_alter,
+                    aug_char_min=unit_to_alter,
+                    aug_char_max=unit_to_alter,
                     # aug_char_p=None,
                     # aug_word_p=None,
                     # aug_word_min=0,
@@ -39,6 +41,18 @@ def Keyboard_Aug(text_lists, char_to_alter=4):
                     tokenizer=tokenizer,
                     reverse_tokenizer=reverse_tokenizer
         )
+
+    augmented_texts = []
+
+    for text in text_lists:
+        augmented_text = aug.augment(text, n=1)
+        augmented_texts.append(augmented_text)
+
+    return augmented_texts
+
+def Word_swap(text_lists, unit_to_alter=4) -> List[str]:
+    aug = naw.RandomWordAug(action='swap', aug_min=unit_to_alter, \
+                            aug_max=unit_to_alter)
 
     augmented_texts = []
 
