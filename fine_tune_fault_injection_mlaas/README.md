@@ -24,3 +24,11 @@ O objetivo é deixar mais realistico, no mundo real existem menos erros.
 ## Usefull commands:
 1. install a new dependency: pipenv install openpyxl
 2. run project: ``pipenv run pip .`` or ``pipenv shell`` to activate envrioment and ``py .``
+
+
+Mais um ruído
+Pelo menos mais um provedor
+Plotar os graficos de forma unida
+Desacoplar um pouco
+
+Resolver o problema com outros provedores e aumentar um pouco o cenário.
