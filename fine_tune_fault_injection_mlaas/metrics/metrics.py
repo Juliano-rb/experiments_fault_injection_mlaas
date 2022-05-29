@@ -63,7 +63,7 @@ def print_metrics(metrics_dict):
     print('----------------------------------------------------------------------------------')
 
 def load_predictions(path):
-    dataframe = pd.read_excel(path)
+    dataframe = pd.read_excel(path, engine='openpyxl')
     predictions = dataframe.values.tolist()
     predictions = [p[0] for p in predictions]
 

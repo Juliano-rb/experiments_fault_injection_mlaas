@@ -8,9 +8,7 @@
 
 # Importando os pacotes
 import pandas as pd
-import sys, os
 from mlaas_providers import providers
-from sklearn.preprocessing import LabelBinarizer
 from utils import preprocessing as pre
 from noise_insertion import noises
 from noise_insertion import noise_insertion
@@ -19,6 +17,10 @@ from datetime import datetime
 from progress import progress_manager
 from metrics import metrics
 import argparse
+
+providers.amazon = providers.return_mock_of(providers.amazon)
+providers.google = providers.return_mock_of(providers.google)
+providers.microsoft = providers.return_mock_of(providers.microsoft)
 
 def parse_args():
     parser = argparse.ArgumentParser(description='parameters', prefix_chars='-')
@@ -64,7 +66,7 @@ def load_dataset_sample(dataset_name, size):
 def run_evaluation(x_dataset, y_labels,
                   noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3],
                   noise_algorithms=[noises.no_noise, noises.random_noise, noises.keyboard_aug, noises.ocr_aug],
-                  mlaas_providers=[providers.naive_classifier],
+                  mlaas_providers=[providers.google],
                   continue_from=None):
     if(continue_from):
         main_path = './outputs/'+continue_from
@@ -90,8 +92,10 @@ def run_evaluation(x_dataset, y_labels,
         main_path + '/results/rq2', noise_list)
     visualization.plot_results(metrics_results, main_path + '/results/others_plots')
 
+    print(main_path)
+
 args = parse_args()
-sample_size = 498
+sample_size = 100
 
 # X, Y = load_dataset_sample('./imdb_dataset.csv', sample_size)
 X, Y = load_dataset_sample('./Tweets_dataset.csv', sample_size)
@@ -122,7 +126,7 @@ run_evaluation(
     X, Y,
     noise_levels=[0.1, 0.15, 0.25, 0.3, 0.35, 0.40, 0.6, 0.8, 0.9],
     noise_algorithms=noise_list,
-    mlaas_providers=[providers.naive_classifier, providers.naive_classifier],#/providers.google, providers.azure, providers.amazon],
+    mlaas_providers=[providers.google, providers.microsoft, providers.amazon],
     continue_from=args.continue_from
 )
 

@@ -1,6 +1,8 @@
+import functools
 from heapq import nsmallest
 import random
 import sys
+import types
 import pandas as pd
 from .azure_sentiment_analysis import AzureSentimentAnalysis
 from .amazon_sentiment_analysis import AmazonSentimentAnalysis
@@ -11,7 +13,7 @@ from pathlib import Path
 sys.path.append(".")
 from progress import progress_manager
 
-def azure(dataset):
+def microsoft(dataset):
     azure = AzureSentimentAnalysis()
     return azure.classify_sentiments(dataset)
 
@@ -23,19 +25,27 @@ def amazon(dataset):
     amazon = AmazonSentimentAnalysis()
     return amazon.classify(dataset)
 
-def naive_classifier(dataset):
-    possible_results =['negative', 'neutral', 'positive']
+def run_naive_classifier(dataset, classes=['negative', 'neutral', 'positive']):
     result = []
     for i in range(len(dataset)):
         result_index = random.randint(-1, 1) 
-        result.append( possible_results[result_index])
+        result.append( classes[result_index])
 
-    # print(result)
     return result
-
+def return_mock_of(provider):
+    copy_func = types.FunctionType(run_naive_classifier.__code__,
+                            run_naive_classifier.__globals__,
+                            name=provider.__name__+'_mock',
+                            argdefs=run_naive_classifier.__defaults__,
+                            closure=run_naive_classifier.__closure__)
+    copy_func = functools.update_wrapper(copy_func, run_naive_classifier)
+    copy_func.__name__ = provider.__name__+'_mock'
+    copy_func.__kwdefaults__ = run_naive_classifier.__kwdefaults__
+    return copy_func
+    
 ###############################
 def read_dataset(dataset_path):
-    dataset = pd.read_excel(dataset_path)
+    dataset = pd.read_excel(dataset_path, engine='openpyxl')
     dataset_list = dataset.values.tolist()
     dataset_list = [line[0] for line in dataset_list]
 
@@ -52,7 +62,9 @@ def save_data_to_file(data, path, file_name):
 def get_providers_instances(func_names, functions_obj):
     functions = []
     for name in func_names:
-        function = getattr(functions_obj, name)
+        # get the function by its __name__
+        function = [f for _, f in functions_obj.__dict__.items() \
+                    if callable(f) and f.__name__ == name][0]
         functions.append(function)
     
     return functions
