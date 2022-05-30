@@ -5,6 +5,12 @@
 - github.com/juliano-rb
 - github.com/amorim
 """
+import os
+running_in_virtualenv = "VIRTUAL_ENV" in os.environ
+
+if not running_in_virtualenv:
+    print("please run this program in a virtual env with pipenv")
+    exit(0)
 
 # Importando os pacotes
 from mlaas_providers import providers
