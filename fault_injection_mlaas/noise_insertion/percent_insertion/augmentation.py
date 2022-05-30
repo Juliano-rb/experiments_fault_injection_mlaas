@@ -33,6 +33,7 @@ def reverse_tokenizer(token_list):
     return ''.join(token_list).strip()
 
 # word augmenters
+
 def AntonymAug(text_lists, aug_level=0.3):
     aug = naw.AntonymAug(name='Antonym_Aug', aug_min=0, aug_max=None,
                 aug_p=aug_level, lang='eng', stopwords=None,

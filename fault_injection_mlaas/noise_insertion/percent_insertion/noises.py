@@ -9,7 +9,7 @@ from random import randrange
 from nlpaug.util import Action
 import os
 
-from noise_insertion import augmentation as aug
+from noise_insertion.percent_insertion import augmentation as aug
 
 def tokenizer(text):
     return [text]

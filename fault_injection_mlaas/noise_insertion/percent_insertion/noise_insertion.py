@@ -1,4 +1,4 @@
-from noise_insertion import noises
+from noise_insertion.percent_insertion import noises
 from pathlib import Path
 import pandas as pd
 import sys

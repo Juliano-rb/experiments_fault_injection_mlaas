@@ -15,8 +15,8 @@ if not running_in_virtualenv:
 # Importando os pacotes
 from mlaas_providers import providers
 from data_sampling.data_sampling import DataSampling
-from noise_insertion import noises
-from noise_insertion import noise_insertion
+from noise_insertion.percent_insertion import noises
+from noise_insertion.percent_insertion import noise_insertion
 from utils import visualization
 from datetime import datetime
 from progress import progress_manager
