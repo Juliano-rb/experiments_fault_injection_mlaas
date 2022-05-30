@@ -7,9 +7,8 @@
 """
 
 # Importando os pacotes
-import pandas as pd
 from mlaas_providers import providers
-from utils import preprocessing as pre
+from data_sampling.data_sampling import DataSampling
 from noise_insertion import noises
 from noise_insertion import noise_insertion
 from utils import visualization
@@ -18,9 +17,12 @@ from progress import progress_manager
 from metrics import metrics
 import argparse
 
+data_sampling = DataSampling()
+
 providers.amazon = providers.return_mock_of(providers.amazon)
 providers.google = providers.return_mock_of(providers.google)
 providers.microsoft = providers.return_mock_of(providers.microsoft)
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description='parameters', prefix_chars='-')
@@ -46,22 +48,6 @@ def get_main_path(size):
     timestamp = now.strftime("%m-%d-%Y %H_%M_%S")
     main_dir = './outputs/size'+str(size)+'_' + timestamp
     return main_dir
-
-def load_dataset_sample(dataset_name, size):
-    # Importanto os dados relacionados a classificação de sentimentos em revisão de filmes.
-    # Fonte: https://www.kaggle.com/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews
-    df = pd.read_csv(dataset_name, encoding ='utf-8')
-    df.rename(columns={'airline_sentiment': 'sentiment', 'text': 'review'}, inplace=True)
-
-    df = df.groupby('sentiment').apply(lambda x: x.sample(int(size/3)))
-    # Aplicando função de tratamento do texto nas revisões:
-    df['review'] = df['review'].apply(pre.denoise_text)
-
-    # Definindo as variáveis dependentes/independentes:
-    X = df['review'].tolist()
-    Y = df['sentiment'].tolist()
-
-    return X, Y
 
 def run_evaluation(x_dataset, y_labels,
                   noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3],
@@ -98,7 +84,7 @@ args = parse_args()
 sample_size = 100
 
 # X, Y = load_dataset_sample('./imdb_dataset.csv', sample_size)
-X, Y = load_dataset_sample('./Tweets_dataset.csv', sample_size)
+X, Y = data_sampling.get_dataset_sample('./Tweets_dataset.csv', sample_size)
 
 noise_list =[
     noises.keyboard_aug,

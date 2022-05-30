@@ -18,7 +18,7 @@ def remove_special_characters(text, remove_digits=True):
     text=re.sub(pattern,'',text)
     return text
 
-# Função que limpa o texto
+# cleans text
 def denoise_text(text):
     text = strip_html(text)
     if(len(text)> 5120):
