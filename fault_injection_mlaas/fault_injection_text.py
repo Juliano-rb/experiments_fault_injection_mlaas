@@ -6,6 +6,8 @@
 - github.com/amorim
 """
 import os
+from mlaas_providers.providers import read_dataset
+from noise_insertion.utils import save_data_to_file
 running_in_virtualenv = "VIRTUAL_ENV" in os.environ
 
 if not running_in_virtualenv:
@@ -24,7 +26,6 @@ from metrics import metrics
 import argparse
 
 data_sampling = DataSampling()
-
 providers.amazon = providers.return_mock_of(providers.amazon)
 providers.google = providers.return_mock_of(providers.google)
 providers.microsoft = providers.return_mock_of(providers.microsoft)
@@ -32,7 +33,7 @@ providers.microsoft = providers.return_mock_of(providers.microsoft)
 
 def parse_args():
     parser = argparse.ArgumentParser(description='parameters', prefix_chars='-')
-    parser.add_argument('-continue_from', default=None, help='Continue from previously ongoing progress. Insert the name of a /outputs folder')
+    parser.add_argument('--continue_from', default=None, help='Continue from previously ongoing progress. Insert the name of a /outputs folder')
     args = parser.parse_args()
 
     return args
@@ -55,7 +56,7 @@ def get_main_path(size):
     main_dir = './outputs/size'+str(size)+'_' + timestamp
     return main_dir
 
-def run_evaluation(x_dataset, y_labels,
+def run_evaluation(sample_size,
                   noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3],
                   noise_algorithms=[noises.no_noise, noises.random_noise, noises.keyboard_aug, noises.ocr_aug],
                   mlaas_providers=[providers.google],
@@ -63,8 +64,15 @@ def run_evaluation(x_dataset, y_labels,
     if(continue_from):
         main_path = './outputs/'+continue_from
         progress = progress_manager.load_progress(main_path)
+        x_dataset = read_dataset(main_path + '/data' + "/dataset.xlsx")
+        y_labels = read_dataset(main_path + '/data' + "/labels.xlsx")
     else:
+        x_dataset, y_labels = data_sampling.get_dataset_sample('./Tweets_dataset.csv', sample_size)
+        print(x_dataset)
         main_path = get_main_path(len(x_dataset))
+        save_data_to_file(x_dataset, main_path + '/data', "dataset")
+        save_data_to_file(y_labels, main_path + '/data', "labels")
+        
         progress = progress_manager.init_progress(main_path, noise_algorithms, noise_levels, mlaas_providers)
 
     print('Generating noise...')
@@ -89,9 +97,6 @@ def run_evaluation(x_dataset, y_labels,
 args = parse_args()
 sample_size = 100
 
-# X, Y = load_dataset_sample('./imdb_dataset.csv', sample_size)
-X, Y = data_sampling.get_dataset_sample('./Tweets_dataset.csv', sample_size)
-
 noise_list =[
     noises.keyboard_aug,
     noises.ocr_aug,
@@ -115,7 +120,7 @@ noise_list =[
 ]
 
 run_evaluation(
-    X, Y,
+    sample_size,
     noise_levels=[0.1, 0.15, 0.25, 0.3, 0.35, 0.40, 0.6, 0.8, 0.9],
     noise_algorithms=noise_list,
     mlaas_providers=[providers.google, providers.microsoft, providers.amazon],

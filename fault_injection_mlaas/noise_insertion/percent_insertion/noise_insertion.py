@@ -1,11 +1,8 @@
 from noise_insertion.percent_insertion import noises
-from pathlib import Path
-import pandas as pd
+from noise_insertion.utils import save_data_to_file
 import sys
 sys.path.append(".")
 from progress import progress_manager
-import inspect
-import argparse
 
 '''
 1. Gerar o ruídos:
@@ -23,14 +20,6 @@ def generate_noised_dataset(x, noise_level, noise_func):
     x_noised = noise_func(x,aug_level=noise_level)
 
     return x_noised
-
-def save_data_to_file(data, path, file_name):
-    df = pd.DataFrame(data, columns =['review'])
-    file_name = file_name+'.xlsx'
-
-    Path(path).mkdir(parents=True, exist_ok=True)
-
-    df.to_excel(path+'/'+file_name, 'data', index=False)
 
 def get_noise_instances(func_names, functions_obj):
     functions = []
@@ -60,7 +49,6 @@ def generate_noised_data(x_dataset, main_path):
     noise_algorithms_input = list(progress['noise'].keys())
     noise_algorithms = get_noise_instances(noise_algorithms_input, noises)
 
-    save_data_to_file(x_dataset, main_path + '/data', "dataset")
     for j in range(0, len(noise_algorithms)):
         algorithm = noise_algorithms[j]
         algorithm_name = noise_algorithms[j].__name__
