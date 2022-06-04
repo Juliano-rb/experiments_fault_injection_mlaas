@@ -8,7 +8,7 @@
             "name": "Python: Debugger project",
             "type": "python",
             "request": "launch",
-            "program": "fault_injection_text.py",
+            "program": "fine_tune_fault_injection_mlaas.py",
         },
         {
             "name": "Python: Continue FROM",

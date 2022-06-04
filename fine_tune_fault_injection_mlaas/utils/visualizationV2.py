@@ -10,8 +10,7 @@ def plot_results(results_array, main_path):
     df = pd.DataFrame(results_array)
     df = df[['provider', 'noise_algorithm','noise_level', 'fmeasure', 'confusion_matrix']]
     # df = df[['provider', 'noise_algorithm','noise_level','acc', 'recall', 'precision', 'fmeasure', 'confusion_matrix']]
-    df['noise_level']= df['noise_level'].map(str)
-
+    df = df['noise_level']= df['noise_level'].map(str)
     save_results_to_excel_file(df, main_path)
     save_results_to_file(results_array, main_path)
     save_confusion_matrix(df, main_path)
@@ -21,7 +20,8 @@ def save_results_to_excel_file(df, main_path):
     Path(main_path).mkdir(parents=True, exist_ok=True)
 
     filename = main_path + '/data_excel.xlsx'
-    df.to_excel(filename, 'results', engine="openpyxl")
+
+    df.to_excel(filename, 'results')
 
 def save_results_to_file(results_array, main_path):
     Path(main_path).mkdir(parents=True, exist_ok=True)
@@ -38,7 +38,7 @@ def save_confusion_matrix(df, main_path):
             dir = main_path + '/' + provider
             Path(dir).mkdir(parents=True, exist_ok=True)
 
-            for noise_level, group in group.groupby('noise_level'):
+            for noise_level, group in group.groupby( lambda x: str([x.noise_level])):
                 cm = group['confusion_matrix'].iloc[0]
                 cm = np.array(cm)
 
@@ -62,7 +62,6 @@ def save_results_plot(df,main_path):
             dir = main_path + '/' + provider
             Path(dir).mkdir(parents=True, exist_ok=True)
 
-            group['noise_level']= df['noise_level'].map(float) # talvez funcione para os dois
             group = group.sort_values(by=['noise_level'], ascending=True)
 
             fig2 = group.plot(x='noise_level', title=noise).get_figure()
@@ -83,10 +82,10 @@ def save_results_plot_RQ1(data,main_path, noise_levels):
         fig, ax = plt.subplots()
         plt.xlabel("noise levels")
         plt.ylabel("f-measure")
-
         ax.set_xticks(noise_levels)
-        ax.set_xlim(0, max(noise_levels))
+        # ax.set_xlim(0, max(noise_levels))
         ax.set_ylim(0, 1)
+        
         markers = itertools.cycle(['>', '+', '.', 'o', '*', 's'])
 
         dir = main_path

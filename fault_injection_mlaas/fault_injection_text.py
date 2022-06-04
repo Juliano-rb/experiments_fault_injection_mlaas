@@ -8,6 +8,7 @@
 import os
 from mlaas_providers.providers import read_dataset
 from noise_insertion.utils import save_data_to_file
+
 running_in_virtualenv = "VIRTUAL_ENV" in os.environ
 
 if not running_in_virtualenv:
@@ -53,7 +54,7 @@ def return_similarity(a,b):
 def get_main_path(size):
     now = datetime.now()
     timestamp = now.strftime("%m-%d-%Y %H_%M_%S")
-    main_dir = './outputs/size'+str(size)+'_' + timestamp
+    main_dir = './outputs/main/size'+str(size)+'_' + timestamp
     return main_dir
 
 def run_evaluation(sample_size,
@@ -62,7 +63,7 @@ def run_evaluation(sample_size,
                   mlaas_providers=[providers.google],
                   continue_from=None):
     if(continue_from):
-        main_path = './outputs/'+continue_from
+        main_path = './outputs/main/'+continue_from
         progress = progress_manager.load_progress(main_path)
         x_dataset = read_dataset(main_path + '/data' + "/dataset.xlsx")
         y_labels = read_dataset(main_path + '/data' + "/labels.xlsx")
@@ -121,7 +122,7 @@ noise_list =[
 
 run_evaluation(
     sample_size,
-    noise_levels=[0.1, 0.15, 0.25, 0.3, 0.35, 0.40, 0.6, 0.8, 0.9],
+    noise_levels=[0.1, 0.2, 0.3, 0.40, 0.5, 0.6, 0.7, 0.8, 0.9],
     noise_algorithms=noise_list,
     mlaas_providers=[providers.google, providers.microsoft, providers.amazon],
     continue_from=args.continue_from

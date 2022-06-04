@@ -97,16 +97,3 @@ def char_swap_noise(text_lists,aug_level=0.3):
 
 def no_noise(text_lists, aug_level=0):
     return text_lists
-
-def return_similarity(a,b):
-    size = len(a) if len(a) > len(b) else len(b)
-    a = a.ljust(size)
-    b = b.ljust(size)
-    # print(len(a), '-', len(b), '=', size)
-    equals = 0
-    for i in range(size):
-        if(a[i]==b[i]):
-            equals+=1
-    
-    return {"equals": equals, "diff": size-equals,"similarity": equals/size}
-
