@@ -68,6 +68,7 @@ def save_results_plot(df,main_path):
             fig2 = group.plot(x='noise_level', title=noise).get_figure()
             fig2.savefig(dir+'/'+noise)
             plt.clf()
+        plt.close('all')
 '''
 RQ1 
 3 graficos, 1 por provider: 
@@ -84,7 +85,6 @@ def save_results_plot_RQ1(data,main_path, noise_levels):
         plt.xlabel("noise levels")
         plt.ylabel("f-measure")
 
-        print("### noise_levels",noise_levels)
         ax.set_xticks(noise_levels)
         # ax.set_xlim(0, max(noise_levels))
         ax.set_ylim(0, 1)
@@ -99,6 +99,7 @@ def save_results_plot_RQ1(data,main_path, noise_levels):
             fig.tight_layout() 
         fig2.savefig(dir+'/'+provider)
         plt.clf()
+    plt.close('all')
 
 '''
 RQ2 
@@ -129,3 +130,4 @@ def save_results_plot_RQ2(data,main_path, noise_levels):
             fig.tight_layout() 
         fig2.savefig(dir+'/'+noise)
         plt.clf()
+    plt.close('all')

@@ -101,13 +101,13 @@ sample_size = 100
 noise_list =[
     noises.keyboard_aug,
     noises.ocr_aug,
-    # noises.random_noise,
-    # noises.char_swap_noise,
-    # noises.aug.AntonymAug,
-    # noises.aug.RandomWordAug,
-    # noises.aug.SpellingAug,
-    # noises.aug.SplitAug,
-    # noises.aug.SynonymAug,
+    noises.random_noise,
+    noises.char_swap_noise,
+    noises.aug.AntonymAug,
+    noises.aug.WordSwap,
+    noises.aug.SpellingAug,
+    noises.aug.SplitAug,
+    noises.aug.SynonymAug,
     # noises.aug.TfldfAug,
     # noises.aug.WordEmbsAug,
     # noises.aug.ContextualWordEmbsAug
@@ -122,7 +122,7 @@ noise_list =[
 
 run_evaluation(
     sample_size,
-    noise_levels=[0.1, 0.2, 0.3, 0.40, 0.5, 0.6, 0.7, 0.8, 0.9],
+    noise_levels=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
     noise_algorithms=noise_list,
     mlaas_providers=[providers.google, providers.microsoft, providers.amazon],
     continue_from=args.continue_from

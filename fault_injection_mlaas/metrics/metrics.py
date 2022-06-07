@@ -44,12 +44,12 @@ def return_similarity(a,b):
     size = len(a) if len(a) > len(b) else len(b)
     a = a.ljust(size)
     b = b.ljust(size)
-    print(len(a), '-', len(b), '=', size)
     equals = 0
     for i in range(size):
         if(a[i]==b[i]):
             equals+=1
     
+    print(f'equals:{equals}, size:{size}, diference:{size-equals}')
     return equals/size
 
 def print_metrics(metrics_dict):

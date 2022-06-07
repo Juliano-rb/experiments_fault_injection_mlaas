@@ -68,6 +68,7 @@ def save_results_plot(df,main_path):
             fig2 = group.plot(x='noise_level', title=noise).get_figure()
             fig2.savefig(dir+'/'+noise)
             plt.clf()
+        plt.close('all')
 '''
 RQ1 
 3 graficos, 1 por provider: 
@@ -98,6 +99,7 @@ def save_results_plot_RQ1(data,main_path, noise_levels):
             fig.tight_layout() 
         fig2.savefig(dir+'/'+provider)
         plt.clf()
+    plt.close('all')
 
 '''
 RQ2 
@@ -106,6 +108,7 @@ eixo x nivel de noise
 eixo y: f-measure para provedor 
 '''
 def save_results_plot_RQ2(data,main_path, noise_levels):
+    print('rq2')
     df = pd.DataFrame(data)
     df_rq2 = df[['provider', 'noise_level', 'fmeasure','noise_algorithm']]
     group = df_rq2[df_rq2['noise_algorithm'] != 'no_noise']
@@ -128,3 +131,4 @@ def save_results_plot_RQ2(data,main_path, noise_levels):
             fig.tight_layout() 
         fig2.savefig(dir+'/'+noise)
         plt.clf()
+    plt.close('all')

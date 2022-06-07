@@ -51,8 +51,8 @@ def ContextualWordEmbsAug(text_lists, aug_level=0.3):
 
     return augmented_texts
 
-def RandomWordAug(text_lists, aug_level=0.3):
-    aug = naw.RandomWordAug(aug_p=aug_level,aug_min=0,aug_max=None,verbose=True)
+def WordSwap(text_lists, aug_level=0.3):
+    aug = naw.RandomWordAug(action='swap', aug_p=aug_level,aug_min=0,aug_max=None,verbose=True)
 
     augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
 
@@ -105,7 +105,7 @@ def ReservedAug(text_lists, aug_level=0.3):
 
     return augmented_texts
 
-def RandomSentAug(text_lists, aug_level=0.3):
+def SentenceShuffle(text_lists, aug_level=0.3):
     aug = nas.RandomSentAug(aug_p=aug_level, tokenizer = None, mode="left")
 
     augmented_texts = aug.augment(text_lists, n=1, num_thread=1)

@@ -1,11 +1,12 @@
 from typing import List
 from data_sampling.data_sampling import DataSampling
-from noise_insertion.unit_insertion.noises import OCR_Aug, Keyboard_Aug, Word_swap
+from noise_insertion.unit_insertion.noises import OCR_Aug, Keyboard_Aug, Word_swap, Random_char_replace
 from mlaas_providers import providers as ml_providers
 from metrics import metrics
 from utils import visualizationV2 as visualization
 import pandas as pd
 import os
+from datetime import datetime
 
 running_in_virtualenv = "VIRTUAL_ENV" in os.environ
 
@@ -15,11 +16,16 @@ if not running_in_virtualenv:
 
 ml_providers.amazon = ml_providers.return_mock_of(ml_providers.amazon)
 ml_providers.google = ml_providers.return_mock_of(ml_providers.google)
+ml_providers.microsoft = ml_providers.return_mock_of(ml_providers.microsoft)
+
+def get_main_path(timestamp, size, min_width, max_width):
+    main_dir = f'./outputs/fine_tune/size{str(size)}_{timestamp}/[{str(min_width)}-{str(max_width)}]/'
+
+    return main_dir
 
 def process(dataset_size, min_width, max_width, char_to_alter=[1,2,3,5], \
                 main_path = "outputs/metrics", \
-                # providers = [ml_providers.naive_classifier, naive2], \
-                providers = [ml_providers.amazon, ml_providers.google], \
+                providers = [ml_providers.google], \
                 algorithms=[OCR_Aug, Keyboard_Aug, Word_swap]):
     dataSampling = DataSampling()
 
@@ -29,21 +35,17 @@ def process(dataset_size, min_width, max_width, char_to_alter=[1,2,3,5], \
     X = data['text'].tolist()
     Y = data['airline_sentiment'].tolist()
 
-    print("### DATA, LABELS: ", X)
-    print("### LABELS:", Y)
-
     metrics_list = []
     for algo in algorithms:
-        print("## algo: ", algo)
         for provider in providers:
-            print("## provider: ", provider)
             for n in char_to_alter:
-                print("## noise level: ", n)
                 X_noised : List[str]= algo(X, unit_to_alter=n)
-                # Y_predict = ml_providers.google(X_noised)
                 Y_predict = provider(X_noised)
 
-                metrics_result= metrics.metrics2(Y_predict, Y, provider.__name__, algo.__name__, n, main_path)
+                metrics_result= metrics.metrics2(
+                                Y_predict, Y, provider.__name__,\
+                                algo.__name__, n, main_path
+                            )
                 metrics_list.append(metrics_result)
 
     
@@ -57,28 +59,34 @@ def process(dataset_size, min_width, max_width, char_to_alter=[1,2,3,5], \
     return metrics_list
 
 if __name__ == '__main__':
-    sample_size=100
-    # sample_size=100
-    # chars_to_alter = [0, 1, 2, 3]
+    sample_size=50
     chars_to_alter = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    min_width=15
-    max_width=20
 
-    sizes = [
+    word_counts = [
         {"min_width": 5, "max_width": 10},
         {"min_width": 10, "max_width": 15},
         {"min_width": 15, "max_width": 20},
+        {"min_width": 20, "max_width": 25},
     ]
     
-    main_path = f'outputs/fine_tune_{str(sample_size)}_[{str(min_width)}-{str(max_width)}]/'
+    timestamp = datetime.now().strftime("%m-%d-%Y %H_%M_%S")
 
-    metrics = process(sample_size, min_width, max_width, chars_to_alter, main_path)
-    
-    print("metrics: ", metrics)
-    noise_list = chars_to_alter
-    # noise_list.extend(chars_to_alter)
-    visualization.save_results_plot_RQ1(metrics,
-        main_path+'/rq1', noise_list)
-    visualization.save_results_plot_RQ2(metrics,
-        main_path+'/rq2', noise_list)
-    visualization.plot_results(metrics, main_path+'others_plots')
+    for sizes in word_counts:
+        main_path = get_main_path(
+            timestamp, sample_size, \
+            sizes['min_width'], sizes['max_width']
+        )
+
+        metrics_data = process(
+            sample_size, sizes['min_width'], \
+            sizes['max_width'], chars_to_alter, main_path
+        )
+        
+        noise_list = chars_to_alter
+        visualization.save_results_plot_RQ1(metrics_data,
+            main_path+'/rq1', noise_list)
+        visualization.save_results_plot_RQ2(metrics_data,
+            main_path+'/rq2', noise_list)
+        visualization.plot_results(metrics_data, main_path+'others_plots')
+
+        print(f'main_path: {main_path}')
