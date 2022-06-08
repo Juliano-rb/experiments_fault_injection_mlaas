@@ -3,7 +3,7 @@ from data_sampling.data_sampling import DataSampling
 from noise_insertion.unit_insertion.noises import OCR_Aug, Keyboard_Aug, Word_swap, Random_char_replace
 from mlaas_providers import providers as ml_providers
 from metrics import metrics
-from utils import visualizationV2 as visualization
+from utils import visualization
 import pandas as pd
 import os
 from datetime import datetime

@@ -62,7 +62,7 @@ def save_results_plot(df,main_path):
             dir = main_path + '/' + provider
             Path(dir).mkdir(parents=True, exist_ok=True)
 
-            group['noise_level']= df['noise_level'].map(float) # talvez funcione para os dois
+            group['noise_level']= df['noise_level'].map(float)
             group = group.sort_values(by=['noise_level'], ascending=True)
 
             fig2 = group.plot(x='noise_level', title=noise).get_figure()
@@ -108,7 +108,6 @@ eixo x nivel de noise
 eixo y: f-measure para provedor 
 '''
 def save_results_plot_RQ2(data,main_path, noise_levels):
-    print('rq2')
     df = pd.DataFrame(data)
     df_rq2 = df[['provider', 'noise_level', 'fmeasure','noise_algorithm']]
     group = df_rq2[df_rq2['noise_algorithm'] != 'no_noise']
