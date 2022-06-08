@@ -39,18 +39,6 @@ def parse_args():
 
     return args
 
-def return_similarity(a,b):
-    size = len(a) if len(a) > len(b) else len(b)
-    a = a.ljust(size)
-    b = b.ljust(size)
-    print(len(a), '-', len(b), '=', size)
-    equals = 0
-    for i in range(size):
-        if(a[i]==b[i]):
-            equals+=1
-    
-    return equals/size
-
 def get_main_path(size):
     now = datetime.now()
     timestamp = now.strftime("%m-%d-%Y %H_%M_%S")
@@ -127,11 +115,3 @@ run_evaluation(
     mlaas_providers=[providers.google, providers.microsoft, providers.amazon],
     continue_from=args.continue_from
 )
-
-# falta testar o progresso e replicar como ta nos noises nos providers
-# run_evaluation(
-#     X, dataset_label,
-#     noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.40, 0.6, 0.8, 0.9],
-#     noise_algorithms=noise_list,
-#     mlaas_providers=[providers.naive_classifier],
-#     prev_state=prev_state)

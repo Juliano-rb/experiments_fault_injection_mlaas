@@ -1,7 +1,7 @@
 from typing import List
 import nlpaug.augmenter.char as nac
 import nlpaug.augmenter.word as naw
-from metrics.metrics import return_similarity
+from noise_insertion.utils import return_similarity
 
 def test_noise(noise_func, text, units_to_alter):
     text = "the white fox jumps over the blue wall"

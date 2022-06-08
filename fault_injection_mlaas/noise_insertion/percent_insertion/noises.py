@@ -20,7 +20,6 @@ def reverse_tokenizer(token_list):
 def keyboard_aug(text_lists,aug_level=0.3):
     augmented_texts = []
 
-    # aug = nac.KeyboardAug(aug_char_p=aug_level, aug_word_max=None, aug_word_p=1)
     aug = nac.KeyboardAug(aug_char_p=aug_level,
                       aug_char_max=None,
                       tokenizer = tokenizer,
@@ -32,7 +31,6 @@ def keyboard_aug(text_lists,aug_level=0.3):
         augmented_text = aug.augment(text, n=1)
         augmented_texts.append(augmented_text)
     
-    # print(augmented_texts)
     return augmented_texts
 
 
@@ -49,9 +47,6 @@ def ocr_aug(text_lists, aug_level=0.3):
         augmented_text = aug.augment(text, n=1)
         augmented_texts.append(augmented_text)
 
-        # return_similarity(text, augmented_text)
-    
-    # print(augmented_texts)
     return augmented_texts
 
 def random_noise(text_lists,aug_level=0.3):
