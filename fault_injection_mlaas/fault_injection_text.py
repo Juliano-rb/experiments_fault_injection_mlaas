@@ -5,26 +5,25 @@
 - github.com/juliano-rb
 - github.com/amorim
 """
-import os
-from mlaas_providers.providers import read_dataset
-from noise_insertion.utils import save_data_to_file
-
 running_in_virtualenv = "VIRTUAL_ENV" in os.environ
 
 if not running_in_virtualenv:
     print("please run this program in a virtual env with pipenv")
     exit(0)
 
-# Importando os pacotes
+import os
+from datetime import datetime
+import argparse
+from typing import List
+from mlaas_providers.providers import read_dataset
+from noise_insertion.utils import save_data_to_file
 from mlaas_providers import providers
 from data_sampling.data_sampling import DataSampling
 from noise_insertion.percent_insertion import noises
 from noise_insertion.percent_insertion import noise_insertion
 from utils import visualization
-from datetime import datetime
 from progress import progress_manager
 from metrics import metrics
-import argparse
 
 data_sampling = DataSampling()
 providers.amazon = providers.return_mock_of(providers.amazon)
@@ -45,8 +44,8 @@ def get_main_path(size):
     main_dir = './outputs/main/size'+str(size)+'_' + timestamp
     return main_dir
 
-def run_evaluation(sample_size,
-                  noise_levels=[0.1, 0.15, 0.2, 0.25, 0.3],
+def run_evaluation(sample_size: int,
+                  noise_levels: List[int] =[0.1, 0.15, 0.2, 0.25, 0.3],
                   noise_algorithms=[noises.no_noise, noises.random_noise, noises.keyboard_aug, noises.ocr_aug],
                   mlaas_providers=[providers.google],
                   continue_from=None):

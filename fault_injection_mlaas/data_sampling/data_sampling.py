@@ -91,14 +91,15 @@ class DataSampling:
             When true, forces a balanced dataset result by reducing all classes to the one that has fewer instances.
         """
         dataset: DataFrame = read_csv(dataset_name)
-        dataset = dataset[["airline_sentiment", "text"]]
+        dataset.rename(columns={"airline_sentiment": "sentiment"}, inplace=True)
+        dataset = dataset[["sentiment", "text"]]
 
         mask = (dataset["text"].str.split().apply(len) >= min_count) \
              & (dataset["text"].str.split().apply(len) <= max_count)
         sub_set: DataFrame = dataset.loc[mask]
 
         # obtem uma quantidade balanceada de cada classe
-        grouped: DataFrameGroupBy  = sub_set.groupby("airline_sentiment")
+        grouped: DataFrameGroupBy  = sub_set.groupby("sentiment")
         number_of_classes = len(grouped)
         instances_of_each_class =  round(number_of_instances/number_of_classes)
 
