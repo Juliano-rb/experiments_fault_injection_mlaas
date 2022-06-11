@@ -110,4 +110,4 @@ class DataSampling:
         
         balanced = grouped.apply(lambda x: x.sample(instances_of_each_class if instances_of_each_class <= len(x) else min_class_size)).reset_index(drop=True)
 
-        return balanced
+        return balanced["text"], balanced["sentiment"]

@@ -1,62 +1,103 @@
-from typing import List
-from data_sampling.data_sampling import DataSampling
-from noise_insertion.unit_insertion.noises import OCR_Aug, Keyboard_Aug, Word_swap, Random_char_replace
-from mlaas_providers import providers as ml_providers
-from metrics import metrics
-from utils import visualization
-import pandas as pd
 import os
-from datetime import datetime
-
 running_in_virtualenv = "VIRTUAL_ENV" in os.environ
 
 if not running_in_virtualenv:
     print("please run this program in a virtual env with pipenv")
     exit(0)
 
+from pathlib import Path
+from typing import TypedDict, List
+from types import FunctionType
+import pandas as pd
+from datetime import datetime
+from data_sampling.data_sampling import DataSampling
+from mlaas_providers import providers
+from progress import progress_manager
+from noise_insertion.unit_insertion import noises as unit_noises
+from noise_insertion.unit_insertion.noises import OCR_Aug, Keyboard_Aug, Word_swap, Random_char_replace
+from noise_insertion import noise_insertion
+from mlaas_providers import providers as ml_providers
+from mlaas_providers.providers import read_dataset
+from metrics import metrics
+from utils import visualization
+
 ml_providers.amazon = ml_providers.return_mock_of(ml_providers.amazon)
 ml_providers.google = ml_providers.return_mock_of(ml_providers.google)
 ml_providers.microsoft = ml_providers.return_mock_of(ml_providers.microsoft)
 
-def get_main_path(timestamp, size, min_width, max_width):
-    main_dir = f'./outputs/fine_tune/size{str(size)}_{timestamp}/[{str(min_width)}-{str(max_width)}]/'
+class Size(TypedDict):
+    min_width: int
+    max_width: int
 
+def create_main_path(timestamp, size):
+    main_dir = f'./outputs/fine_tune/size{str(size)}_{timestamp}'
+
+    Path(main_dir).mkdir(parents=True, exist_ok=True)
     return main_dir
 
-def process(dataset_size, min_width, max_width, char_to_alter=[1,2,3,5], \
-                main_path = "outputs/metrics", \
-                providers = [ml_providers.google], \
-                algorithms=[OCR_Aug, Keyboard_Aug, Word_swap]):
+def create_sub_path(main_path: str, min_width: int, max_width: int):
+    path = f'{main_path}/[{str(min_width)}-{str(max_width)}]'
+    
+    Path(path).mkdir(parents=True, exist_ok=True)
+    Path(path+'/data').mkdir(parents=True, exist_ok=True)
+    
+    return path
+
+def prepare_start(
+    timestamp: str,
+    sample_size: int,
+    sizes: List[Size],
+    noise_algorithms,
+    noise_levels,
+    mlaas_providers
+):
     dataSampling = DataSampling()
+    main_path = create_main_path(timestamp, sample_size)
+    sub_path_list = []
+    for size in sizes:
+        min_width = size['min_width']
+        max_width = size['max_width']
+        sub_path = create_sub_path(main_path, min_width, max_width)
 
-    # data = dataSampling.get_by_width(dataset_size, min_width, max_width)
-    data = dataSampling.get_by_word_count('Tweets_dataset.csv', dataset_size, min_width, max_width)
+        data, labels = dataSampling.get_by_word_count('Tweets_dataset.csv',
+                                              sample_size,
+                                              min_width,
+                                              max_width)
+        data.to_excel(sub_path+"/data/dataset.xlsx", 'data', index=False)
+        labels.to_excel(sub_path+"/data/labels.xlsx", 'data', index=False)
+        sub_path_list.append(sub_path)
+        progress = progress_manager.init_progress(sub_path, noise_algorithms, noise_levels, mlaas_providers)
+    return sub_path_list
 
-    X = data['text'].tolist()
-    Y = data['airline_sentiment'].tolist()
+def run_evaluation(noise_levels_units: List[int],
+                   continue_from: str,    
+                   mlaas_providers: List[FunctionType] = [ml_providers.google],
+                   algorithms: List[FunctionType] = [OCR_Aug, Keyboard_Aug, Word_swap],
+):
+    main_path = continue_from
+    progress = progress_manager.load_progress(main_path)
 
-    metrics_list = []
-    for algo in algorithms:
-        for provider in providers:
-            for n in char_to_alter:
-                X_noised : List[str]= algo(X, unit_to_alter=n)
-                Y_predict = provider(X_noised)
+    x_dataset = read_dataset(main_path + '/data/dataset.xlsx')
+    y_labels = read_dataset(main_path + '/data/labels.xlsx')
 
-                metrics_result= metrics.metrics2(
-                                Y_predict, Y, provider.__name__,\
-                                algo.__name__, n, main_path
-                            )
-                metrics_list.append(metrics_result)
+    print('Generating noise...')
+    progress = noise_insertion.generate_noised_data(x_dataset, main_path, noise_package=unit_noises)
 
-    
-    df = pd.DataFrame(metrics_list)
-    filename = main_path + '/metrics_excel.xlsx'
+    print('Getting predictions from providers...')
+    progress = providers.get_prediction_results(main_path)
 
-    df.to_excel(filename, 'metrics')
+    print('Calculating metrics...')
+    metrics_results = metrics.metrics(progress, y_labels, main_path)
 
-    data.to_excel(main_path+"sample.xlsx", 'dat')
-    
-    return metrics_list
+    noise_list = [0]
+    noise_list.extend(noise_levels_units)
+    visualization.save_results_plot_RQ1(metrics_results,
+        main_path + '/results/rq1', noise_list)
+    visualization.save_results_plot_RQ2(metrics_results,
+        main_path + '/results/rq2', noise_list)
+    visualization.plot_results(metrics_results, main_path + '/results/others_plots')
+
+    print(main_path)
 
 if __name__ == '__main__':
     sample_size=50
@@ -71,22 +112,15 @@ if __name__ == '__main__':
     
     timestamp = datetime.now().strftime("%m-%d-%Y %H_%M_%S")
 
-    for sizes in word_counts:
-        main_path = get_main_path(
-            timestamp, sample_size, \
-            sizes['min_width'], sizes['max_width']
-        )
-
-        metrics_data = process(
-            sample_size, sizes['min_width'], \
-            sizes['max_width'], chars_to_alter, main_path
-        )
-        
-        noise_list = chars_to_alter
-        visualization.save_results_plot_RQ1(metrics_data,
-            main_path+'/rq1', noise_list)
-        visualization.save_results_plot_RQ2(metrics_data,
-            main_path+'/rq2', noise_list)
-        visualization.plot_results(metrics_data, main_path+'others_plots')
-
-        print(f'main_path: {main_path}')
+    path_list = prepare_start(timestamp, 
+                              sample_size,
+                              word_counts,
+                              [OCR_Aug, Keyboard_Aug, Word_swap],
+                              chars_to_alter,
+                              [ml_providers.google, ml_providers.microsoft, ml_providers.amazon]                         )
+    for path in path_list:
+        run_evaluation(chars_to_alter, 
+                        continue_from=path, 
+                        mlaas_providers=[ml_providers.google, ml_providers.microsoft, ml_providers.amazon],
+                        algorithms=[OCR_Aug, Keyboard_Aug, Word_swap])
+    print(path_list)

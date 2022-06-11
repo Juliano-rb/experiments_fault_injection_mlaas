@@ -44,10 +44,10 @@ def get_noise_levels(progress, algorithm):
 
     return noise_levels_filtered
 
-def generate_noised_data(x_dataset, main_path):
+def generate_noised_data(x_dataset, main_path, noise_package=noises):
     progress = progress_manager.load_progress(main_path)
     noise_algorithms_input = list(progress['noise'].keys())
-    noise_algorithms = get_noise_instances(noise_algorithms_input, noises)
+    noise_algorithms = get_noise_instances(noise_algorithms_input, noise_package)
 
     for j in range(0, len(noise_algorithms)):
         algorithm = noise_algorithms[j]

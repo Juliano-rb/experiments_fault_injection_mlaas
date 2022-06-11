@@ -5,13 +5,13 @@
 - github.com/juliano-rb
 - github.com/amorim
 """
+import os
 running_in_virtualenv = "VIRTUAL_ENV" in os.environ
 
 if not running_in_virtualenv:
     print("please run this program in a virtual env with pipenv")
     exit(0)
 
-import os
 from datetime import datetime
 import argparse
 from typing import List
@@ -20,7 +20,7 @@ from noise_insertion.utils import save_data_to_file
 from mlaas_providers import providers
 from data_sampling.data_sampling import DataSampling
 from noise_insertion.percent_insertion import noises
-from noise_insertion.percent_insertion import noise_insertion
+from noise_insertion import noise_insertion
 from utils import visualization
 from progress import progress_manager
 from metrics import metrics

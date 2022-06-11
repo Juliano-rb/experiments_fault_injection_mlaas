@@ -84,19 +84,3 @@ def metrics(progress, y_labels, main_path):
                 metrics.append(result)
     save_metrics_to_file(main_path+'/results/', metrics)
     return metrics
-
-
-def metrics2(predictions: list, y_labels: list, provider: str, \
-            noise: str, noise_level: int, main_path: str):
-    if len(y_labels) != len(predictions):
-        print('inconsistent values')
-    
-    acc, recall, precision, auc, fmeasure, confusion_m = calc_dataset_metrics(y_labels,predictions)
-    result = {'provider':provider,
-            'noise_algorithm':noise,
-            'noise_level':0 if noise == 'no_noise' else noise_level,
-            'acc':acc, 'recall':recall, 'precision': precision, 'auc': auc, 'fmeasure': fmeasure,
-            'confusion_matrix': confusion_m.tolist()
-    }
-    save_metrics_to_file(main_path, result)
-    return result

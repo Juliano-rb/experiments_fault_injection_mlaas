@@ -6,7 +6,7 @@ from noise_insertion.utils import return_similarity
 def test_noise(noise_func, text, units_to_alter):
     text = "the white fox jumps over the blue wall"
 
-    result = noise_func(text_lists=[text], unit_to_alter=units_to_alter)
+    result = noise_func(text_lists=[text], aug_level=units_to_alter)
 
     print(result[0])
     print(return_similarity(text, result[0]))
@@ -17,10 +17,10 @@ def tokenizer(text):
 def reverse_tokenizer(token_list):
     return ''.join(token_list).strip()
 
-def OCR_Aug(text_lists, unit_to_alter=4):
+def OCR_Aug(text_lists, aug_level=4):
     aug = nac.OcrAug(
-                    aug_char_min=unit_to_alter,
-                    aug_char_max=unit_to_alter,
+                    aug_char_min=int(aug_level),
+                    aug_char_max=int(aug_level),
                     # aug_char_p=None,
                     # aug_word_p=None,
                     # aug_word_min=0,
@@ -38,10 +38,10 @@ def OCR_Aug(text_lists, unit_to_alter=4):
 
     return augmented_texts
 
-def Keyboard_Aug(text_lists, unit_to_alter=4) -> List[str]:
+def Keyboard_Aug(text_lists, aug_level=4) -> List[str]:
     aug = nac.KeyboardAug(
-                    aug_char_min=unit_to_alter,
-                    aug_char_max=unit_to_alter,
+                    aug_char_min=int(aug_level),
+                    aug_char_max=int(aug_level),
                     # aug_char_p=None,
                     # aug_word_p=None,
                     # aug_word_min=0,
@@ -59,9 +59,9 @@ def Keyboard_Aug(text_lists, unit_to_alter=4) -> List[str]:
 
     return augmented_texts
 
-def Word_swap(text_lists, unit_to_alter=4) -> List[str]:
-    aug = naw.RandomWordAug(action='swap', aug_min=unit_to_alter, \
-                            aug_max=unit_to_alter)
+def Word_swap(text_lists, aug_level=4) -> List[str]:
+    aug = naw.RandomWordAug(action='swap', aug_min=int(aug_level), \
+                            aug_max=int(aug_level))
 
     augmented_texts = []
 
@@ -71,12 +71,12 @@ def Word_swap(text_lists, unit_to_alter=4) -> List[str]:
 
     return augmented_texts
 
-def Random_char_replace(text_lists, unit_to_alter=4):
+def Random_char_replace(text_lists, aug_level=4):
     aug = nac.RandomCharAug(
                     action='substitute',
                     spec_char='!@#$%^&*()_+.', #checar se inclui o ponto
-                    aug_char_min=unit_to_alter,
-                    aug_char_max=unit_to_alter,
+                    aug_char_min=int(aug_level),
+                    aug_char_max=int(aug_level),
                     # aug_char_p=None,
                     # aug_word_p=None,
                     # aug_word_min=0,
