@@ -2,6 +2,7 @@ import functools
 from heapq import nsmallest
 import random
 import sys
+from time import sleep
 import types
 import pandas as pd
 from .azure_sentiment_analysis import AzureSentimentAnalysis
@@ -26,6 +27,7 @@ def amazon(dataset):
     return amazon.classify(dataset)
 
 def run_naive_classifier(dataset, classes=['negative', 'neutral', 'positive']):
+    # sleep(2)
     result = []
     for i in range(len(dataset)):
         result_index = random.randint(-1, 1) 
@@ -62,7 +64,7 @@ def save_data_to_file(data, path, file_name):
 def get_providers_instances(func_names, functions_obj):
     functions = []
     for name in func_names:
-        # get the function by its __name__
+         # get the function by its __name__
         function = [f for _, f in functions_obj.__dict__.items() \
                     if callable(f) and f.__name__ == name][0]
         functions.append(function)

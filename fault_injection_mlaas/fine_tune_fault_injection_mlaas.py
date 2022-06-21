@@ -1,9 +1,9 @@
 import os
 running_in_virtualenv = "VIRTUAL_ENV" in os.environ
-
 if not running_in_virtualenv:
-    print("please run this program in a virtual env with pipenv")
-    exit(0)
+    print("** entering pipenv'v virtualenv")
+    print("** please re-run the experiment")
+    os.system('pipenv shell')
 
 from pathlib import Path
 from typing import TypedDict, List
@@ -14,17 +14,19 @@ from data_sampling.data_sampling import DataSampling
 from mlaas_providers import providers
 from progress import progress_manager
 from noise_insertion.unit_insertion import noises as unit_noises
-from noise_insertion.unit_insertion.noises import OCR_Aug, Keyboard_Aug, Word_swap, Random_char_replace
+from noise_insertion.unit_insertion import noises
 from noise_insertion import noise_insertion
 from mlaas_providers import providers as ml_providers
 from mlaas_providers.providers import read_dataset
 from metrics import metrics
 from utils import visualization
 
-ml_providers.amazon = ml_providers.return_mock_of(ml_providers.amazon)
-ml_providers.google = ml_providers.return_mock_of(ml_providers.google)
-ml_providers.microsoft = ml_providers.return_mock_of(ml_providers.microsoft)
+# ml_providers.amazon = ml_providers.return_mock_of(ml_providers.amazon)
+# ml_providers.google = ml_providers.return_mock_of(ml_providers.google)
+# ml_providers.microsoft = ml_providers.return_mock_of(ml_providers.microsoft)
 
+# noises.test_noise(noises.SplitAug, 2)
+# exit(0)
 class Size(TypedDict):
     min_width: int
     max_width: int
@@ -63,16 +65,22 @@ def prepare_start(
                                               sample_size,
                                               min_width,
                                               max_width)
-        data.to_excel(sub_path+"/data/dataset.xlsx", 'data', index=False)
-        labels.to_excel(sub_path+"/data/labels.xlsx", 'data', index=False)
+
+        path = Path(sub_path+"/data/dataset.xlsx")
+        if not path.is_file():
+            data.to_excel(sub_path+"/data/dataset.xlsx", 'data', index=False)
+        
+        path = Path(sub_path+"/data/labels.xlsx")
+        if not path.is_file():
+            labels.to_excel(sub_path+"/data/labels.xlsx", 'data', index=False)
         sub_path_list.append(sub_path)
         progress = progress_manager.init_progress(sub_path, noise_algorithms, noise_levels, mlaas_providers)
     return sub_path_list
 
 def run_evaluation(noise_levels_units: List[int],
                    continue_from: str,    
-                   mlaas_providers: List[FunctionType] = [ml_providers.google],
-                   algorithms: List[FunctionType] = [OCR_Aug, Keyboard_Aug, Word_swap],
+                #    mlaas_providers: List[FunctionType] = [ml_providers.google],
+                #    algorithms: List[FunctionType] = [OCR_Aug, Keyboard_Aug, Word_swap],
 ):
     main_path = continue_from
     progress = progress_manager.load_progress(main_path)
@@ -100,8 +108,9 @@ def run_evaluation(noise_levels_units: List[int],
     print(main_path)
 
 if __name__ == '__main__':
-    sample_size=50
+    sample_size=51
     chars_to_alter = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    # chars_to_alter = [0, 1, 2]
 
     word_counts = [
         {"min_width": 5, "max_width": 10},
@@ -110,17 +119,29 @@ if __name__ == '__main__':
         {"min_width": 20, "max_width": 25},
     ]
     
+    noise_algo = [
+        noises.OCR_Aug,
+        noises.Keyboard_Aug,
+        noises.Word_swap,
+        noises.Random_char_replace,
+        noises.SplitAug,
+        noises.Char_swap,
+        noises.AntonymAug,
+        noises.SpellingAug,
+        noises.SynonymAug,
+        noises.SentenceShuffle
+    ]
     timestamp = datetime.now().strftime("%m-%d-%Y %H_%M_%S")
+    timestamp = "06-13-2022 12_04_11"
 
     path_list = prepare_start(timestamp, 
                               sample_size,
                               word_counts,
-                              [OCR_Aug, Keyboard_Aug, Word_swap],
+                              noise_algo,
                               chars_to_alter,
-                              [ml_providers.google, ml_providers.microsoft, ml_providers.amazon]                         )
+                              [ml_providers.google, ml_providers.amazon, ml_providers.microsoft])
+                            # [ml_providers.google, ml_providers.microsoft, ml_providers.amazon]                         )
     for path in path_list:
         run_evaluation(chars_to_alter, 
-                        continue_from=path, 
-                        mlaas_providers=[ml_providers.google, ml_providers.microsoft, ml_providers.amazon],
-                        algorithms=[OCR_Aug, Keyboard_Aug, Word_swap])
+                       continue_from=path)
     print(path_list)

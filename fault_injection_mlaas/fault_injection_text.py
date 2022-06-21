@@ -46,7 +46,7 @@ def get_main_path(size):
 
 def run_evaluation(sample_size: int,
                   noise_levels: List[int] =[0.1, 0.15, 0.2, 0.25, 0.3],
-                  noise_algorithms=[noises.no_noise, noises.random_noise, noises.keyboard_aug, noises.ocr_aug],
+                  noise_algorithms=[noises.no_noise, noises.Random_char_replace, noises.keyboard_aug, noises.ocr_aug],
                   mlaas_providers=[providers.google],
                   continue_from=None):
     if(continue_from):
@@ -88,7 +88,7 @@ sample_size = 100
 noise_list =[
     noises.keyboard_aug,
     noises.ocr_aug,
-    noises.random_noise,
+    noises.Random_char_replace,
     noises.char_swap_noise,
     noises.aug.AntonymAug,
     noises.aug.WordSwap,

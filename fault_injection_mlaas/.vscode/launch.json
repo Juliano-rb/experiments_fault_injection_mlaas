@@ -5,17 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Debugger project",
+            "name": "Python: Arquivo Atual",
             "type": "python",
             "request": "launch",
-            "program": "fine_tune_fault_injection_mlaas.py",
-        },
-        {
-            "name": "Python: Continue FROM",
-            "type": "python",
-            "request": "launch",
-            "program": "fault_injection_text.py",
-            "args": ["-continue_from", "size498_01-31-2022 09_12_13"]
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "python": "/Users/rocha/.virtualenvs/fault_injection_mlaas-kNGMnR3a/Scripts/python.exe"
         }
     ]
 }

@@ -49,8 +49,9 @@ def ocr_aug(text_lists, aug_level=0.3):
 
     return augmented_texts
 
-def random_noise(text_lists,aug_level=0.3):
+def Random_char_replace(text_lists,aug_level=0.3):
     aug = nac.RandomCharAug(aug_char_p=aug_level,
+                    action='substitute',
                     aug_char_max=None,
                     tokenizer = tokenizer,
                     reverse_tokenizer=reverse_tokenizer,
