@@ -34,7 +34,7 @@ def reverse_tokenizer(token_list):
 
 # word augmenters
 
-def AntonymAug(text_lists, aug_level=0.3):
+def Antonym(text_lists, aug_level=0.3):
     aug = naw.AntonymAug(name='Antonym_Aug', aug_min=0, aug_max=None,
                 aug_p=aug_level, lang='eng', stopwords=None,
                 stopwords_regex=None, verbose=1)
@@ -43,8 +43,23 @@ def AntonymAug(text_lists, aug_level=0.3):
 
     return augmented_texts
 
-# demora demais
-def ContextualWordEmbsAug(text_lists, aug_level=0.3):
+def Synonym(text_lists, aug_level=0.3):
+    aug = naw.SynonymAug(aug_p=aug_level,aug_min=0,aug_max=None)
+
+    augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
+
+    return augmented_texts
+
+def WordEmbeddings(text_lists, aug_level=0.3):
+    aug = naw.WordEmbsAug(model_type='glove',
+                          model_path='models/glove.twitter.27B.100d.txt',
+                          aug_p=aug_level,aug_min=0,aug_max=None)
+
+    augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
+
+    return augmented_texts
+
+def ContextualWordEmbs(text_lists, aug_level=0.3):
     aug = naw.ContextualWordEmbsAug(aug_p=aug_level,aug_min=0,aug_max=None, verbose=True,device="cpu")
 
     augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
@@ -58,40 +73,23 @@ def WordSwap(text_lists, aug_level=0.3):
 
     return augmented_texts
 
-def SpellingAug(text_lists, aug_level=0.3):
+def Spelling(text_lists, aug_level=0.3):
     aug = naw.SpellingAug(dict_path='./en.natural.txt', aug_p=aug_level,aug_min=0,aug_max=None)
 
     augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
 
     return augmented_texts
 
-def SplitAug(text_lists, aug_level=0.3):
+def WordSplit(text_lists, aug_level=0.3):
     aug = naw.SplitAug(aug_p=aug_level, aug_min=1, aug_max=1000)
 
     augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
 
     return augmented_texts
 
-
-def SynonymAug(text_lists, aug_level=0.3):
-    aug = naw.SynonymAug(aug_p=aug_level,aug_min=0,aug_max=None)
-
-    augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
-
-    return augmented_texts
-
 # tentar gerar o modelo usando o próprio dataset
-def TfldfAug(text_lists, aug_level=0.3):
-    aug = naw.TfIdfAug(model_path='./models', aug_p=aug_level,aug_min=0,aug_max=None)
-
-    augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
-
-    return augmented_texts
-
-# # Não achei onde gerar o modelo, preciso pesquisar mais no repositório
-def WordEmbsAug(text_lists, aug_level=0.3):
-    aug = naw.WordEmbsAug(model_type='word2vec', model_path='models/cbow_s300.txt',
-                       aug_p=aug_level,aug_min=0,aug_max=None)
+def TfIdfWord(text_lists, aug_level=0.3):
+    aug = naw.TfIdfAug(model_path='./models/tfidf', aug_p=aug_level,aug_min=0,aug_max=None)
 
     augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
 

@@ -46,7 +46,7 @@ def get_main_path(size):
 
 def run_evaluation(sample_size: int,
                   noise_levels: List[int] =[0.1, 0.15, 0.2, 0.25, 0.3],
-                  noise_algorithms=[noises.no_noise, noises.Random_char_replace, noises.keyboard_aug, noises.ocr_aug],
+                  noise_algorithms=[noises.no_noise, noises.RandomCharReplace, noises.Keyboard, noises.OCR],
                   mlaas_providers=[providers.google],
                   continue_from=None):
     if(continue_from):
@@ -83,24 +83,23 @@ def run_evaluation(sample_size: int,
     print(main_path)
 
 args = parse_args()
-sample_size = 100
+sample_size = 10
 
 noise_list =[
-    noises.keyboard_aug,
-    noises.ocr_aug,
-    noises.Random_char_replace,
-    noises.char_swap_noise,
-    noises.aug.AntonymAug,
+    noises.Keyboard,
+    noises.OCR,
+    noises.RandomCharReplace,
+    noises.CharSwap,
     noises.aug.WordSwap,
-    noises.aug.SpellingAug,
-    noises.aug.SplitAug,
-    noises.aug.SynonymAug,
-    # noises.aug.TfldfAug,
-    # noises.aug.WordEmbsAug,
-    # noises.aug.ContextualWordEmbsAug
-
+    noises.aug.WordSplit,
+    noises.aug.Antonym,
+    noises.aug.Synonym,
+    noises.aug.Spelling,
+    noises.aug.TfIdfWord,
+    noises.aug.WordEmbeddings,
+    noises.aug.ContextualWordEmbs # Não usar mais este algoritmo pois não faz tanto sentido pelos testes
     # noises.aug.ReservedAug, #removido pois apenas faz replacement de palavras
-    # noises.aug.RandomSentAug, #removido pois os textos são menores
+    # noises.aug.RandomSentAug, #removido pois os textos são menores que uma sentença
     # noises.aug.AbstSummAug,
     # noises.aug.ContextualWordEmbsForSentenceAug
     # noise_insertion.aug.BackTranslation, # error

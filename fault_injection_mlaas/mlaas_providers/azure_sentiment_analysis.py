@@ -54,7 +54,7 @@ class AzureSentimentAnalysis:
         return data
 
     # chama o servico de classificação azure em grupos de 10 em 10
-    def classify_sentiments(self, documents, call_rate_param=20):
+    def classify_sentiments(self, documents, call_rate_param=55):
         chunks = []
         results = []
         for i in range(0, len(documents), 10):

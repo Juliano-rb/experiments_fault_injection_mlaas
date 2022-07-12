@@ -9,5 +9,6 @@ sample.csv
 state.json
 models/lambda/out
 models/cbow_s300.txt
+models/glove.twitter.27B.100d.txt
 .tmp*/
 desktop.ini

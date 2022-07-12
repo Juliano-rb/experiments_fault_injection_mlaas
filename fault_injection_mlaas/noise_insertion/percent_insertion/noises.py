@@ -17,7 +17,7 @@ def tokenizer(text):
 def reverse_tokenizer(token_list):
     return ''.join(token_list).strip()
 
-def keyboard_aug(text_lists,aug_level=0.3):
+def Keyboard(text_lists,aug_level=0.3):
     augmented_texts = []
 
     aug = nac.KeyboardAug(aug_char_p=aug_level,
@@ -34,7 +34,7 @@ def keyboard_aug(text_lists,aug_level=0.3):
     return augmented_texts
 
 
-def ocr_aug(text_lists, aug_level=0.3):
+def OCR(text_lists, aug_level=0.3):
     aug = nac.OcrAug(aug_char_p=aug_level,
                     aug_char_max=None,
                     aug_word_max=None,
@@ -49,7 +49,7 @@ def ocr_aug(text_lists, aug_level=0.3):
 
     return augmented_texts
 
-def Random_char_replace(text_lists,aug_level=0.3):
+def RandomCharReplace(text_lists,aug_level=0.3):
     aug = nac.RandomCharAug(aug_char_p=aug_level,
                     action='substitute',
                     aug_char_max=None,
@@ -66,7 +66,7 @@ def Random_char_replace(text_lists,aug_level=0.3):
 
     return augmented_texts
 
-def char_swap_noise(text_lists,aug_level=0.3):
+def CharSwap(text_lists,aug_level=0.3):
     """
     Noise insertion by swapping characters.
 

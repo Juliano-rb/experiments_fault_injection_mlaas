@@ -1,14 +1,12 @@
 import os
 running_in_virtualenv = "VIRTUAL_ENV" in os.environ
 if not running_in_virtualenv:
-    print("** entering pipenv'v virtualenv")
-    print("** please re-run the experiment")
+    print("** entering pipenv's virtualenv")
     os.system('pipenv shell')
+    print("** please re-run the experiment")
 
 from pathlib import Path
 from typing import TypedDict, List
-from types import FunctionType
-import pandas as pd
 from datetime import datetime
 from data_sampling.data_sampling import DataSampling
 from mlaas_providers import providers
@@ -20,12 +18,16 @@ from mlaas_providers import providers as ml_providers
 from mlaas_providers.providers import read_dataset
 from metrics import metrics
 from utils import visualization
+# from models.tfidf_train_model import TrainTFIDF 
 
 # ml_providers.amazon = ml_providers.return_mock_of(ml_providers.amazon)
 # ml_providers.google = ml_providers.return_mock_of(ml_providers.google)
 # ml_providers.microsoft = ml_providers.return_mock_of(ml_providers.microsoft)
 
-# noises.test_noise(noises.SplitAug, 2)
+# tfidf = TrainTFIDF()
+# tfidf.train_tfidf()
+
+# noises.test_noise(noises.WordSplit, 10)
 # exit(0)
 class Size(TypedDict):
     min_width: int
@@ -108,7 +110,7 @@ def run_evaluation(noise_levels_units: List[int],
     print(main_path)
 
 if __name__ == '__main__':
-    sample_size=51
+    sample_size=100
     chars_to_alter = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     # chars_to_alter = [0, 1, 2]
 
@@ -120,19 +122,22 @@ if __name__ == '__main__':
     ]
     
     noise_algo = [
-        noises.OCR_Aug,
-        noises.Keyboard_Aug,
-        noises.Word_swap,
-        noises.Random_char_replace,
-        noises.SplitAug,
-        noises.Char_swap,
-        noises.AntonymAug,
-        noises.SpellingAug,
-        noises.SynonymAug,
-        noises.SentenceShuffle
+        noises.Keyboard,
+        noises.OCR,
+        noises.RandomCharReplace,
+        noises.CharSwap,
+        noises.WordSwap,
+        noises.WordSplit,
+        noises.Antonym,
+        noises.Synonym,
+        noises.Spelling,
+        noises.TfIdfWord,
+        noises.WordEmbeddings,
+        noises.ContextualWordEmbs,
+        # noises.SentenceShuffle, # Removido pois no dataset existem poucas sentenças
     ]
     timestamp = datetime.now().strftime("%m-%d-%Y %H_%M_%S")
-    timestamp = "06-13-2022 12_04_11"
+    # timestamp = "07-04-2022 20_19_59" uncomment with a timestamp to continue from previouly run
 
     path_list = prepare_start(timestamp, 
                               sample_size,
@@ -140,7 +145,7 @@ if __name__ == '__main__':
                               noise_algo,
                               chars_to_alter,
                               [ml_providers.google, ml_providers.amazon, ml_providers.microsoft])
-                            # [ml_providers.google, ml_providers.microsoft, ml_providers.amazon]                         )
+                            # [ml_providers.google, ml_providers.microsoft, ml_providers.amazon])
     for path in path_list:
         run_evaluation(chars_to_alter, 
                        continue_from=path)

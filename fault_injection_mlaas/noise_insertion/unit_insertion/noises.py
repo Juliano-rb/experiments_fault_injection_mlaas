@@ -5,12 +5,12 @@ import nlpaug.augmenter.word as naw
 from noise_insertion.utils import return_similarity
 
 def test_noise(noise_func, units_to_alter):
-    text = "The white fox jumps over the blue wall. This is horrible."
+    text = "Apple is a amazing company, i think they should rule the world."
     print("before: ", text)
 
     result = noise_func(text_lists=[text], aug_level=units_to_alter)
 
-    print("after: ", result[0])
+    print("after:  ", result[0])
     print(return_similarity(text, result[0]))
 
 def tokenizer(text):
@@ -19,7 +19,7 @@ def tokenizer(text):
 def reverse_tokenizer(token_list):
     return ''.join(token_list).strip()
 
-def OCR_Aug(text_lists, aug_level=4):
+def OCR(text_lists, aug_level=4):
     if(int(aug_level)==0): return text_lists
 
     aug = nac.OcrAug(
@@ -39,7 +39,7 @@ def OCR_Aug(text_lists, aug_level=4):
 
     return augmented_texts
 
-def Keyboard_Aug(text_lists, aug_level=4) -> List[str]:
+def Keyboard(text_lists, aug_level=4) -> List[str]:
     if(int(aug_level)==0): return text_lists
 
     aug = nac.KeyboardAug(
@@ -59,7 +59,7 @@ def Keyboard_Aug(text_lists, aug_level=4) -> List[str]:
 
     return augmented_texts
 
-def Word_swap(text_lists, aug_level=4) -> List[str]:
+def WordSwap(text_lists, aug_level=4) -> List[str]:
     if(int(aug_level)==0): return text_lists
 
     aug = naw.RandomWordAug(action='swap',
@@ -74,7 +74,7 @@ def Word_swap(text_lists, aug_level=4) -> List[str]:
 
     return augmented_texts
 
-def Random_char_replace(text_lists, aug_level=4):
+def RandomCharReplace(text_lists, aug_level=4):
     if(int(aug_level)==0): return text_lists
 
     aug = nac.RandomCharAug(
@@ -96,7 +96,7 @@ def Random_char_replace(text_lists, aug_level=4):
 
     return augmented_texts
 
-def Char_swap(text_lists, aug_level=4):
+def CharSwap(text_lists, aug_level=4):
     if(int(aug_level)==0): return text_lists
 
     aug = nac.RandomCharAug(action='swap',
@@ -118,7 +118,7 @@ def Char_swap(text_lists, aug_level=4):
 
     return augmented_texts
 
-def AntonymAug(text_lists, aug_level=4):
+def Antonym(text_lists, aug_level=4):
     if(int(aug_level)==0): return text_lists
 
     aug = naw.AntonymAug(name='Antonym_Aug', 
@@ -134,11 +134,11 @@ def AntonymAug(text_lists, aug_level=4):
     return augmented_texts
 
 # deu erro, tenho q ver
-def WordEmbsAug(text_lists, aug_level=4):
+def WordEmbeddings(text_lists, aug_level=4):
     if(int(aug_level)==0): return text_lists
 
-    aug = naw.WordEmbsAug(model_type='word2vec',
-                          model_path='models/cbow_s300.txt',
+    aug = naw.WordEmbsAug(model_type='glove',
+                          model_path='models/glove.twitter.27B.100d.txt',
                           aug_min=int(aug_level), 
                           aug_max=int(aug_level))
 
@@ -146,7 +146,28 @@ def WordEmbsAug(text_lists, aug_level=4):
 
     return augmented_texts
 
-def SpellingAug(text_lists, aug_level=4):
+def ContextualWordEmbs(text_lists, aug_level=0.3):
+    aug = naw.ContextualWordEmbsAug(aug_min=int(aug_level),
+                                    aug_max=int(aug_level),
+                                    verbose=True,
+                                    device="cpu")
+
+    augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
+
+    return augmented_texts
+
+def TfIdfWord(text_lists, aug_level=0.3):
+    if(int(aug_level)==0): return text_lists
+
+    aug = naw.TfIdfAug(model_path='./models/tfidf',
+                       aug_min=int(aug_level), 
+                       aug_max=int(aug_level))
+
+    augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
+
+    return augmented_texts
+
+def Spelling(text_lists, aug_level=4):
     if(int(aug_level)==0): return text_lists
 
     aug = naw.SpellingAug(dict_path='./en.natural.txt',
@@ -158,7 +179,7 @@ def SpellingAug(text_lists, aug_level=4):
 
     return augmented_texts
 
-def SplitAug(text_lists, aug_level=4):
+def WordSplit(text_lists, aug_level=4):
     if(int(aug_level)==0): return text_lists
 
     aug = naw.SplitAug(aug_min=int(aug_level), 
@@ -173,7 +194,7 @@ def SplitAug(text_lists, aug_level=4):
     return augmented_texts
 
 
-def SynonymAug(text_lists, aug_level=4):
+def Synonym(text_lists, aug_level=4):
     if(int(aug_level)==0): return text_lists
 
     aug = naw.SynonymAug(aug_min=int(aug_level), 

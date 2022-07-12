@@ -3,13 +3,14 @@ from pandas.core.groupby.generic import DataFrameGroupBy, DataFrame
 from utils import preprocessing as pre
 
 class DataSampling:
-    def get_dataset_sample(self, dataset_name, size):
+    def get_dataset_sample(self, dataset_name, size=None):
         # Importanto os dados relacionados a classificação de sentimentos em revisão de filmes.
         # Fonte: https://www.kaggle.com/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews
         dataset = read_csv(dataset_name, encoding ='utf-8')
         dataset.rename(columns={'airline_sentiment': 'sentiment', 'text': 'review'}, inplace=True)
+        if size:
+            dataset = dataset.groupby('sentiment').apply(lambda x: x.sample(int(size/3)))
 
-        dataset = dataset.groupby('sentiment').apply(lambda x: x.sample(int(size/3)))
         # Aplicando função de tratamento do texto nas revisões:
         dataset['review'] = dataset['review'].apply(pre.denoise_text)
 
