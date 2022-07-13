@@ -10,18 +10,66 @@ def plot_results(results_array, main_path):
     df = pd.DataFrame(results_array)
     df = df[['provider', 'noise_algorithm','noise_level', 'fmeasure', 'confusion_matrix']]
     # df = df[['provider', 'noise_algorithm','noise_level','acc', 'recall', 'precision', 'fmeasure', 'confusion_matrix']]
-    df['noise_level']= df['noise_level'].map(str)
 
+    save_latex_table(df, main_path)
+    df['noise_level']= df['noise_level'].map(str)
     save_results_to_excel_file(df, main_path)
     save_results_to_file(results_array, main_path)
     save_confusion_matrix(df, main_path)
     save_results_plot(df, main_path)
 
+def save_latex_table(df: pd.DataFrame, main_path):
+    Path(main_path).mkdir(parents=True, exist_ok=True)
+
+    df['noise_level'] = df['noise_level'].map(float)
+    df['fmeasure'] = df['fmeasure'].map(float)
+    df = df[['provider', 'noise_algorithm','noise_level', 'fmeasure']]
+
+    df = df.replace('_',' ', regex=True)
+
+    df = df.rename(columns={
+        "provider": "Provider",
+        "noise_algorithm": "Noise Algorithm",
+        "noise_level": "Noise Level",
+        "fmeasure": "F-Measure"})
+
+    for provider, group in df.groupby('Provider'):
+        filename = main_path + f'/table_latex_{provider}.txt'
+
+        caption = 'Table Caption'
+        s = group.style.set_table_styles([
+            {"selector": "label", "props": f":{{{caption.replace(':','§')}}};"}
+        ])
+
+        # s.hide(axis='index')
+        s.format(precision=2)  
+
+        table_latex = s.to_latex(
+            column_format="rrrrr", position="h", position_float="centering",
+            hrules=True, label="table:5", caption="Styled LaTeX Table",
+            multirow_align="t", multicol_align="r"
+        )
+        with open(filename, 'w+') as f:
+            f.write(table_latex)
+
 def save_results_to_excel_file(df, main_path):
     Path(main_path).mkdir(parents=True, exist_ok=True)
 
+    df['noise_level'] = df['noise_level'].map(float)
+    df['fmeasure'] = df['fmeasure'].map(float)
+    df = df[['provider', 'noise_algorithm','noise_level', 'fmeasure']]
+
+    df = df.replace('_',' ', regex=True)
+
+    df = df.rename(columns={
+        "provider": "Provider",
+        "noise_algorithm": "Noise Algorithm",
+        "noise_level": "Noise Level",
+        "fmeasure": "F-Measure"})
+
     filename = main_path + '/data_excel.xlsx'
-    df.to_excel(filename, 'results', engine="openpyxl")
+    df.to_excel(filename, 'results', engine="openpyxl", index=False)
+
 
 def save_results_to_file(results_array, main_path):
     Path(main_path).mkdir(parents=True, exist_ok=True)
