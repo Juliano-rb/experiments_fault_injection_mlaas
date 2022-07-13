@@ -5,7 +5,7 @@ import nlpaug.augmenter.word as naw
 from noise_insertion.utils import return_similarity
 
 def test_noise(noise_func, units_to_alter):
-    text = "Apple is a amazing company, i think they should rule the world."
+    text = "The white fox jumps over the blue wall. This is horrible."
     print("before: ", text)
 
     result = noise_func(text_lists=[text], aug_level=units_to_alter)

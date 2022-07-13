@@ -26,9 +26,9 @@ from progress import progress_manager
 from metrics import metrics
 
 data_sampling = DataSampling()
-providers.amazon = providers.return_mock_of(providers.amazon)
-providers.google = providers.return_mock_of(providers.google)
-providers.microsoft = providers.return_mock_of(providers.microsoft)
+# providers.amazon = providers.return_mock_of(providers.amazon)
+# providers.google = providers.return_mock_of(providers.google)
+# providers.microsoft = providers.return_mock_of(providers.microsoft)
 
 
 def parse_args():
@@ -83,7 +83,7 @@ def run_evaluation(sample_size: int,
     print(main_path)
 
 args = parse_args()
-sample_size = 10
+sample_size = 100
 
 noise_list =[
     noises.Keyboard,
