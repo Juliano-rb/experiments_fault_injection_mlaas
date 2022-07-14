@@ -184,7 +184,7 @@ def WordSplit(text_lists, aug_level=4):
 
     aug = naw.SplitAug(aug_min=int(aug_level), 
                        aug_max=int(aug_level),
-                       min_char=2,
+                       min_char=3, # best value is 2, we're using 2 because of an nlpaug's bug
                     #    tokenizer=tokenizer,
                     #    reverse_tokenizer=reverse_tokenizer
                        )
