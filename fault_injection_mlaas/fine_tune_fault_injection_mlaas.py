@@ -20,14 +20,14 @@ from metrics import metrics
 from utils import visualization
 # from models.tfidf_train_model import TrainTFIDF 
 
-# ml_providers.amazon = ml_providers.return_mock_of(ml_providers.amazon)
-# ml_providers.google = ml_providers.return_mock_of(ml_providers.google)
-# ml_providers.microsoft = ml_providers.return_mock_of(ml_providers.microsoft)
+ml_providers.amazon = ml_providers.return_mock_of(ml_providers.amazon)
+ml_providers.google = ml_providers.return_mock_of(ml_providers.google)
+ml_providers.microsoft = ml_providers.return_mock_of(ml_providers.microsoft)
 
 # tfidf = TrainTFIDF()
 # tfidf.train_tfidf()
 
-# noises.test_noise(noises.WordSplit, 10)
+# noises.test_noise(noises.WordSplit, 7)
 # exit(0)
 class Size(TypedDict):
     min_width: int
@@ -110,7 +110,7 @@ def run_evaluation(noise_levels_units: List[int],
     print(main_path)
 
 if __name__ == '__main__':
-    sample_size=100
+    sample_size=5
     chars_to_alter = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     # chars_to_alter = [0, 1, 2]
 
