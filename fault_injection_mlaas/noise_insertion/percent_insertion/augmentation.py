@@ -74,7 +74,7 @@ def WordSwap(text_lists, aug_level=0.3):
     return augmented_texts
 
 def Spelling(text_lists, aug_level=0.3):
-    aug = naw.SpellingAug(dict_path='./en.natural.txt', aug_p=aug_level,aug_min=0,aug_max=None)
+    aug = naw.SpellingAug(dict_path='./models/en.natural.txt', aug_p=aug_level,aug_min=0,aug_max=None)
 
     augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
 

@@ -170,7 +170,7 @@ def TfIdfWord(text_lists, aug_level=0.3):
 def Spelling(text_lists, aug_level=4):
     if(int(aug_level)==0): return text_lists
 
-    aug = naw.SpellingAug(dict_path='./en.natural.txt',
+    aug = naw.SpellingAug(dict_path='./models/en.natural.txt',
                           aug_min=int(aug_level), 
                           aug_max=int(aug_level)
                           )
