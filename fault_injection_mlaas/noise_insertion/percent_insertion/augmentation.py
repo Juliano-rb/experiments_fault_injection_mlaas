@@ -116,27 +116,27 @@ def OBackTranslation(text_lists, aug_level=0.3):
     augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
 
     return augmented_texts
-# sentence augmenters
-# gpt2? wtf
-def OContextualWordEmbsForSentenceAug(text_lists, aug_level=0.3):
-    aug = nas.ContextualWordEmbsForSentenceAug(min_length=0, model_type='gpt2')
 
-    augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
+# non used algorithms
+# def OContextualWordEmbsForSentenceAug(text_lists, aug_level=0.3):
+#     aug = nas.ContextualWordEmbsForSentenceAug(min_length=0, model_type='gpt2')
 
-    return augmented_texts
+#     augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
 
-def OAbstSummAug(text_lists, aug_level=0.3):
-    text_lists = [t[0:512] for t in text_lists]
+#     return augmented_texts
 
-    aug = nas.AbstSummAug(min_length=0)
+# def OAbstSummAug(text_lists, aug_level=0.3):
+#     text_lists = [t[0:512] for t in text_lists]
 
-    augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
+#     aug = nas.AbstSummAug(min_length=0)
 
-    return augmented_texts
+#     augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
 
-def OLambadaAug(text_lists, aug_level=0.3):
-    aug = nas.LambadaAug(model_dir='./models/lambda/out', min_length=0)
+#     return augmented_texts
 
-    augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
+# def OLambadaAug(text_lists, aug_level=0.3):
+#     aug = nas.LambadaAug(model_dir='./models/lambda/out', min_length=0)
 
-    return augmented_texts
+#     augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
+
+#     return augmented_texts

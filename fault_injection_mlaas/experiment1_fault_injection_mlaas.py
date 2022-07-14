@@ -98,12 +98,6 @@ noise_list =[
     noises.aug.TfIdfWord,
     noises.aug.WordEmbeddings,
     noises.aug.ContextualWordEmbs # Não usar mais este algoritmo pois não faz tanto sentido pelos testes
-    # noises.aug.ReservedAug, #removido pois apenas faz replacement de palavras
-    # noises.aug.RandomSentAug, #removido pois os textos são menores que uma sentença
-    # noises.aug.AbstSummAug,
-    # noises.aug.ContextualWordEmbsForSentenceAug
-    # noise_insertion.aug.BackTranslation, # error
-    # noise_insertion.aug.LambadaAug # error
 ]
 
 run_evaluation(
