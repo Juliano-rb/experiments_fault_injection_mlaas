@@ -34,7 +34,7 @@ class Size(TypedDict):
     max_width: int
 
 def create_main_path(timestamp, size):
-    main_dir = f'./outputs/fine_tune/size{str(size)}_{timestamp}'
+    main_dir = f'./outputs/experiment2/size{str(size)}_{timestamp}'
 
     Path(main_dir).mkdir(parents=True, exist_ok=True)
     return main_dir

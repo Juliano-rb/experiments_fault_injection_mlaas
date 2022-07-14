@@ -26,9 +26,9 @@ from progress import progress_manager
 from metrics import metrics
 
 data_sampling = DataSampling()
-# providers.amazon = providers.return_mock_of(providers.amazon)
-# providers.google = providers.return_mock_of(providers.google)
-# providers.microsoft = providers.return_mock_of(providers.microsoft)
+providers.amazon = providers.return_mock_of(providers.amazon)
+providers.google = providers.return_mock_of(providers.google)
+providers.microsoft = providers.return_mock_of(providers.microsoft)
 
 
 def parse_args():
@@ -41,7 +41,7 @@ def parse_args():
 def get_main_path(size):
     now = datetime.now()
     timestamp = now.strftime("%m-%d-%Y %H_%M_%S")
-    main_dir = './outputs/main/size'+str(size)+'_' + timestamp
+    main_dir = './outputs/experiment1/size'+str(size)+'_' + timestamp
     return main_dir
 
 def run_evaluation(sample_size: int,
@@ -50,7 +50,7 @@ def run_evaluation(sample_size: int,
                   mlaas_providers=[providers.google],
                   continue_from=None):
     if(continue_from):
-        main_path = './outputs/main/'+continue_from
+        main_path = './outputs/experiment1/'+continue_from
         progress = progress_manager.load_progress(main_path)
         x_dataset = read_dataset(main_path + '/data' + "/dataset.xlsx")
         y_labels = read_dataset(main_path + '/data' + "/labels.xlsx")
@@ -83,7 +83,7 @@ def run_evaluation(sample_size: int,
     print(main_path)
 
 args = parse_args()
-sample_size = 100
+sample_size = 5
 
 noise_list =[
     noises.Keyboard,
