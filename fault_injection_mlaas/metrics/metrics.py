@@ -29,12 +29,11 @@ def calc_dataset_metrics(y_labels, predicted_labels):
     # Transformando os labels em númericos para analise de metricas:
     y_labels_binary = list(map(map_input, y_labels))
     predicted_binary = list(map(map_input, predicted_labels))
-    # adicionar parametro average_precision_score 
     acc = accuracy_score(y_labels_binary,predicted_binary)
     recall = recall_score(y_labels_binary,predicted_binary, average="weighted")
-    precision = precision_score(y_labels_binary,predicted_binary, average="weighted")
+    precision = precision_score(y_labels_binary,predicted_binary, average="weighted", zero_division=0)
     auc = None #roc_auc_score(y_labels_binary,(predicted_binary, 3), multi_class="ovr", average="weighted") precisa de ajustes para multi class
-    fmeasure = f1_score(y_labels_binary,predicted_binary, average="weighted")
+    fmeasure = f1_score(y_labels_binary,predicted_binary, average="weighted", zero_division=0)
     confusion_m = confusion_matrix(y_labels_binary, predicted_binary)
     # confusion_m_mult = multilabel_confusion_matrix(y_labels_binary, predicted_binary) #, labels=["ne", "bird", "cat"]
 
