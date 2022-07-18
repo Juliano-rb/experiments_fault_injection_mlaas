@@ -47,7 +47,7 @@ def create_sub_path(main_path: str, min_width: int, max_width: int):
     
     return path
 
-def prepare_start(
+def prepare_execution(
     timestamp: str,
     sample_size: int,
     sizes: List[Size],
@@ -134,18 +134,16 @@ if __name__ == '__main__':
         noises.TfIdfWord,
         noises.WordEmbeddings,
         noises.ContextualWordEmbs,
-        # noises.SentenceShuffle, # Removido pois no dataset existem poucas sentenças
     ]
     timestamp = datetime.now().strftime("%m-%d-%Y %H_%M_%S")
     # timestamp = "07-04-2022 20_19_59" uncomment with a timestamp to continue from previouly run
 
-    path_list = prepare_start(timestamp, 
+    path_list = prepare_execution(timestamp, 
                               sample_size,
                               word_counts,
                               noise_algo,
                               chars_to_alter,
                               [ml_providers.google, ml_providers.amazon, ml_providers.microsoft])
-                            # [ml_providers.google, ml_providers.microsoft, ml_providers.amazon])
     for path in path_list:
         run_evaluation(chars_to_alter, 
                        continue_from=path)
