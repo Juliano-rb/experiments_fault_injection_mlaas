@@ -1,11 +1,13 @@
 ## Prerequisites
 - `python 3`.
 - `pipenv` installed [``how to install``](https://pipenv.pypa.io/en/latest/#install-pipenv-today).
-
+- to run with real MlaaS providers, you should provide valid credentials to each used provider:
+    - create a `credentials.py` file following the structure of `credentials.example.py`
+    - fill the credentials to Amazon, Microsoft and Google providers
 ## Running experiments
-1. activate the envrioment: ``pipenv shell``.
+1. activate the environmentment: ``pipenv shell``.
 2. install dependencies: ``pipenv install``. The process may take several minutes.
-2. with the envrioment activated, run the notebook: 
+2. with the environmentment activated, run the notebook: 
     1. jupyter-lab with command ``jupyter-lab``
     2. follow notebook's instructions.
 
