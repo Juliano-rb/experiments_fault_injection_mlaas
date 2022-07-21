@@ -5,6 +5,9 @@ from pathlib import Path
 import numpy as np
 import seaborn as sn
 import itertools
+from pandas.io.formats.style import Styler
+
+from utils.dataframe import divide_dataframe
 
 def plot_results(results_array, main_path):
     df = pd.DataFrame(results_array)
@@ -33,22 +36,29 @@ def save_latex_table(df: pd.DataFrame, main_path):
         "noise_level": "Noise Level",
         "fmeasure": "F-Measure"})
 
+    group: pd.DataFrame
     for provider, group in df.groupby('Provider'):
+        provider = provider.capitalize()
+        group = group[["Noise Algorithm","Noise Level", "F-Measure"]]
+
+        group = divide_dataframe(group)
+
         filename = main_path + f'/table_latex_{provider}.txt'
+        
+        group = group.style \
+        .set_properties(**{'font-size': '4px'} ) \
+        .hide(axis=0) \
+        .format(precision=2)
 
-        caption = 'Table Caption'
-        s = group.style.set_table_styles([
-            {"selector": "label", "props": f":{{{caption.replace(':','§')}}};"}
-        ])
-
-        # s.hide(axis='index')
-        s.format(precision=2)  
-
-        table_latex = s.to_latex(
-            column_format="rrrrr", position="h", position_float="centering",
-            hrules=True, label="table:5", caption="Styled LaTeX Table",
-            multirow_align="t", multicol_align="r"
+        table_latex = group.to_latex(
+            column_format="rrr|rrr", position="h", position_float="centering",
+            hrules=True, label=f'table:results_{provider}', caption=f'Results of {provider} provider',
+            multirow_align="t", multicol_align="r", convert_css=True
         )
+
+        # on duplicating columns to save space (divide_dataframe), is added __1 to prevent duplicated columns
+        table_latex = table_latex.replace('__1', '')
+
         with open(filename, 'w+') as f:
             f.write(table_latex)
 
@@ -101,7 +111,7 @@ def save_confusion_matrix(df, main_path):
                 fig = ax.get_figure()
                 Path(dir+'/confusion_matrix/'+noise).mkdir(parents=True, exist_ok=True)
 
-                fig.savefig(dir+'/confusion_matrix/'+noise+'/'+fig_title+'.png')
+                fig.savefig(dir+'/confusion_matrix/'+noise+'/'+fig_title+'.jpg', transparent=False, dpi=250)
                 plt.clf()
 
 def save_results_plot(df,main_path):
@@ -114,7 +124,7 @@ def save_results_plot(df,main_path):
             group = group.sort_values(by=['noise_level'], ascending=True)
 
             fig2 = group.plot(x='noise_level', title=noise).get_figure()
-            fig2.savefig(dir+'/'+noise)
+            fig2.savefig(dir+'/'+noise+'.jpg', transparent=False, dpi=250)
             plt.clf()
         plt.close('all')
 '''
@@ -145,7 +155,7 @@ def save_results_plot_RQ1(data,main_path, noise_levels):
             sample = sample.sort_values(by=['noise_level'], ascending=True)
             fig2 = sample.plot(ax=ax, marker =next(markers), xlabel='noise level', x='noise_level', y='fmeasure', title=provider, label=algorithm).legend(bbox_to_anchor=(1.0, 1)).get_figure()
             fig.tight_layout() 
-        fig2.savefig(dir+'/'+provider)
+        fig2.savefig(dir+'/'+provider+'.jpg', transparent=False, dpi=250)
         plt.clf()
     plt.close('all')
 
@@ -176,6 +186,6 @@ def save_results_plot_RQ2(data,main_path, noise_levels):
             sample = sample.sort_values(by=['noise_level'], ascending=True)
             fig2 = sample.plot(ax=ax, xlabel='noise level', x='noise_level', y='fmeasure', title=noise, label=provider).get_figure()
             fig.tight_layout() 
-        fig2.savefig(dir+'/'+noise)
+        fig2.savefig(dir+'/'+noise+'.jpg', transparent=False, dpi=250)
         plt.clf()
     plt.close('all')

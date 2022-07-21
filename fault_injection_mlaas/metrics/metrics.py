@@ -68,7 +68,7 @@ def metrics(progress, y_labels, main_path):
             noise_levels_list = [float(l) for l in noise_levels_list]
 
             for level in noise_levels_list:
-                predictions_path = progress['predictions'][provider][noise][str(level)] ## ta dando erro aqui
+                predictions_path = progress['predictions'][provider][noise][str(level)]
                 predictions = load_predictions(predictions_path)
 
                 if len(y_labels) != len(predictions):
