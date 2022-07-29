@@ -6,7 +6,7 @@
     - fill the credentials to Amazon, Microsoft and Google providers.
 ## Running experiments
 1. activate the environmentment: ``pipenv shell``.
-2. install dependencies: ``pipenv install``. The process may take several minutes.
+2. install dependencies: ``pipenv sync``. The process may take several minutes.
 2. with the environmentment activated, run the notebook: 
     1. jupyter-lab with command ``jupyter-lab``.
     2. open the file `notebook_experiment.ipynb`.
