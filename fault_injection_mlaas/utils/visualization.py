@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+# import matplotlib
 from datetime import datetime
 from pathlib import Path
 import numpy as np
@@ -8,6 +9,14 @@ import itertools
 from pandas.io.formats.style import Styler
 
 from utils.dataframe import divide_dataframe
+
+# matplotlib.use("pgf")
+# matplotlib.rcParams.update({
+#     "pgf.texsystem": "pdflatex",
+#     'font.family': 'serif',
+#     'text.usetex': True,
+#     'pgf.rcfonts': False,
+# })
 
 def plot_results(results_array, main_path):
     df = pd.DataFrame(results_array)
@@ -129,36 +138,51 @@ def save_results_plot(df,main_path):
         plt.close('all')
 '''
 RQ1 
-3 graficos, 1 por provider: 
-eixo x: nivel de noise 
-eixo y: f-measure de cada noise
+3 plots, 1 per provider: 
+axis x: noise level
+axis y: f-measure of each noise
 '''
 def save_results_plot_RQ1(data,main_path, noise_levels):
     df = pd.DataFrame(data)
     df_rq1 = df[['provider', 'noise_level', 'fmeasure','noise_algorithm']]
+    
+    fig, axes_list = plt.subplots(ncols=len(df_rq1.groupby('provider')))
+    axes = iter(axes_list)
+
     for provider, group in df_rq1.groupby('provider'):
         group = group[group['noise_algorithm'] != 'no_noise']
+        ax = next(axes)
         # setup axis
-        fig, ax = plt.subplots()
         plt.xlabel("noise levels")
-        plt.ylabel("f-measure")
+        ax.set_ylabel("f-measure")
 
         ax.set_xticks(noise_levels)
         ax.set_xlim(0, max(noise_levels))
         ax.set_ylim(0, 1)
         markers = itertools.cycle(['>', '+', '.', 'o', '*', 's'])
-
+        
         dir = main_path
         Path(dir).mkdir(parents=True, exist_ok=True)
         for algorithm in group['noise_algorithm'].unique():
-            sample = group[group['noise_algorithm'] == algorithm]
+            sample: pd.DataFrame = group[group['noise_algorithm'] == algorithm]
             sample = sample.sort_values(by=['noise_level'], ascending=True)
-            fig2 = sample.plot(ax=ax, marker =next(markers), xlabel='noise level', x='noise_level', y='fmeasure', title=provider, label=algorithm).legend(bbox_to_anchor=(1.0, 1)).get_figure()
-            fig.tight_layout() 
-        fig2.savefig(dir+'/'+provider+'.jpg', transparent=False, dpi=250)
-        plt.clf()
+            fig2 = sample.plot(legend=None, ax=ax, marker=next(markers), \
+                               xlabel='noise level', x='noise_level', y='fmeasure', \
+                               title=provider.capitalize(), label=algorithm,
+                               figsize=(15,5)
+                    )
+    
+    lines_labels = axes_list[0].get_legend_handles_labels()
+    lines, labels = [sum(lol, []) for lol in zip(lines_labels)]
+    plt.legend(lines, labels, bbox_to_anchor=(1, 1), loc='upper left')
+
+    fig.tight_layout()
+
+    fig.savefig(dir+'/rq1.jpg', transparent=False, dpi=250)
+    # plt.savefig(dir+'/rq1.pgf')
     plt.close('all')
 
+    return fig
 '''
 RQ2 
 1 grafico para cada noise 

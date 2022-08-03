@@ -97,7 +97,6 @@ def get_prediction_results(main_path):
     providers_input = list(progress['predictions'].keys())
     providers = get_providers_instances(providers_input, ml_providers)
 
-    # predictions = progress["predictions"] # falta salvar o estado
     noise_data = progress['noise']
     for provider_algo in providers:
         print('-',provider_algo.__name__)
@@ -108,9 +107,6 @@ def get_prediction_results(main_path):
         except:
             pass
 
-        # testar isso aqui antes
-        # get predictions to no-noise one time for entire provider
-        # todo: isolar isso de alguma forma
         if(progress["predictions"][provider_algo.__name__]["no_noise"]["0.0"]==None):
             print('--','no noise')
             no_noise_path = main_path + "/data/dataset.xlsx"
