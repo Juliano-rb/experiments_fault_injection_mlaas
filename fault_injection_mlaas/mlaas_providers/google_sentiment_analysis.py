@@ -20,7 +20,7 @@ def call_google_sentiment(review, client, result_queue):
         document = language_v1.Document(content=review["document"], type_=text_type, language="EN")
         result = client.analyze_sentiment(request={'document': document})
         result_data = map_sentiment(result.document_sentiment)
-        result_data = {'sentiment': 'positive' if result.document_sentiment.score >= 0 else 'negative'}
+        result_data = {'sentiment': map_sentiment(result.document_sentiment)}
 
         result_queue.put({"predictions":result_data, "index":review["index"]})
         # result_queue.put(result_data)
