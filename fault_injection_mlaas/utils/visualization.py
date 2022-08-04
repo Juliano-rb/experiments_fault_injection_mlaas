@@ -7,16 +7,8 @@ import numpy as np
 import seaborn as sn
 import itertools
 from pandas.io.formats.style import Styler
-
 from utils.dataframe import divide_dataframe
 
-# matplotlib.use("pgf")
-# matplotlib.rcParams.update({
-#     "pgf.texsystem": "pdflatex",
-#     'font.family': 'serif',
-#     'text.usetex': True,
-#     'pgf.rcfonts': False,
-# })
 
 def plot_results(results_array, main_path):
     df = pd.DataFrame(results_array)
@@ -178,8 +170,13 @@ def save_results_plot_RQ1(data,main_path, noise_levels):
 
     fig.tight_layout()
 
-    fig.savefig(dir+'/rq1.jpg', transparent=False, dpi=250)
-    # plt.savefig(dir+'/rq1.pgf')
+    plt.savefig(dir+'/rq1.pdf')
+
+    for axe in axes_list:
+        axe.legend(loc='upper left', framealpha=0.5)
+
+    fig.savefig(dir+'/rq1_full.jpg', transparent=False, dpi=250)
+    
     plt.close('all')
 
     return fig
@@ -211,5 +208,7 @@ def save_results_plot_RQ2(data,main_path, noise_levels):
             fig2 = sample.plot(ax=ax, xlabel='noise level', x='noise_level', y='fmeasure', title=noise, label=provider).get_figure()
             fig.tight_layout() 
         fig2.savefig(dir+'/'+noise+'.jpg', transparent=False, dpi=250)
+        fig2.savefig(dir+'/'+noise+'.pdf')
+        
         plt.clf()
     plt.close('all')
