@@ -68,7 +68,7 @@ class AzureSentimentAnalysis:
                                     call_rate=call_rate_param)
         request_queue.run()
         if len(result_queque.queue) != len(chunks):
-            raise "uma das threads deu erro"
+            raise "error in one of the threads"
 
         print('\r', end='')
 

@@ -58,7 +58,6 @@ class GoogleSentimentAnalysis(SentimentAnalysis):
         for i in range(len(documents)):
             results.append(result_queque.get())
         
-        # checar os resultados
         results = arrange_results(results)
         results = list(map(lambda r: r['sentiment'], results))
         

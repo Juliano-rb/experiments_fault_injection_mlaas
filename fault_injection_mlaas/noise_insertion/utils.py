@@ -10,6 +10,8 @@ def save_data_to_file(data, path, file_name):
     df.to_excel(path+'/'+file_name, 'data', index=False)
 
 def return_similarity(a,b):
+    a = a.capitalize()
+    b = b.capitalize()
     size = len(a) if len(a) > len(b) else len(b)
     a = a.ljust(size)
     b = b.ljust(size)

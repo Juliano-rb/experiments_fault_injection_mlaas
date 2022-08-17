@@ -121,7 +121,6 @@ def get_prediction_results(main_path):
             print('--', noise)
 
             persist_predictions(provider_algo, noise, "0.0", no_noise_predictions, main_path, progress )
-            ## buscar aqui
             noise_levels_available = progress["predictions"][provider_algo.__name__][noise]
             noise_levels_available = get_available_noise_levels(noise_levels_available)
             for nlevel in noise_levels_available:

@@ -4,8 +4,7 @@ import nlpaug.augmenter.sentence as nas
 import nlpaug.augmenter.word as naw
 from noise_insertion.utils import return_similarity
 
-def test_noise(noise_func, units_to_alter):
-    text = "The white fox jumps over the blue wall. This is horrible."
+def test_noise(noise_func, units_to_alter, text = "The white fox jumps over the blue wall."):
     print("before: ", text)
 
     result = noise_func(text_lists=[text], aug_level=units_to_alter)
@@ -133,7 +132,6 @@ def Antonym(text_lists, aug_level=4):
 
     return augmented_texts
 
-# deu erro, tenho q ver
 def WordEmbeddings(text_lists, aug_level=4):
     if(int(aug_level)==0): return text_lists
 
