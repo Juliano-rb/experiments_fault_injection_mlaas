@@ -13,3 +13,4 @@ models/glove.twitter.27B.100d.txt
 .tmp*/
 desktop.ini
 .ipynb_checkpoints
+/test_scenarios/out/
