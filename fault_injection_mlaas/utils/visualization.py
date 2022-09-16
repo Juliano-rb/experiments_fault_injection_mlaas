@@ -1,6 +1,5 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-# import matplotlib
 from datetime import datetime
 from pathlib import Path
 import numpy as np
@@ -9,6 +8,7 @@ import itertools
 from pandas.io.formats.style import Styler
 from utils.dataframe import divide_dataframe
 
+font_size=21
 
 def plot_results(results_array, main_path):
     df = pd.DataFrame(results_array)
@@ -148,7 +148,13 @@ def save_results_plot_RQ1(data,main_path, noise_levels):
         plt.xlabel("noise levels")
         ax.set_ylabel("f-measure")
 
+        ax.xaxis.label.set_fontsize(font_size)
+        ax.yaxis.label.set_fontsize(font_size)
+        ax.tick_params(axis='both', which='major', labelsize=font_size)
+        ax.set_title(label=provider.capitalize(), fontdict={'fontsize':font_size})
+
         ax.set_xticks(noise_levels)
+        ax.set_xticklabels([str(x)[1:] for x in np.round(ax.get_xticks(), 3)])
         ax.set_xlim(0, max(noise_levels))
         ax.set_ylim(0, 1)
         markers = itertools.cycle(['>', '+', '.', 'o', '*', 's'])
@@ -158,17 +164,21 @@ def save_results_plot_RQ1(data,main_path, noise_levels):
         for algorithm in group['noise_algorithm'].unique():
             sample: pd.DataFrame = group[group['noise_algorithm'] == algorithm]
             sample = sample.sort_values(by=['noise_level'], ascending=True)
-            fig2 = sample.plot(legend=None, ax=ax, marker=next(markers), \
+
+            fig2 = sample.plot(legend=None, ax=ax, marker=next(markers), markersize=7, \
                                xlabel='noise level', x='noise_level', y='fmeasure', \
-                               title=provider.capitalize(), label=algorithm,
-                               figsize=(15,5)
+                                label=algorithm,
+                               figsize=(15,7.5),
                     )
+                    
     
     lines_labels = axes_list[0].get_legend_handles_labels()
     lines, labels = [sum(lol, []) for lol in zip(lines_labels)]
-    plt.legend(lines, labels, bbox_to_anchor=(1, 1), loc='upper left')
-
-    fig.tight_layout()
+    plt.tight_layout()
+    plt.subplots_adjust(bottom=0.33, wspace=0.3, hspace=0)
+    plt.figlegend(lines, labels, loc = 'lower center', \
+                  ncol=3, labelspacing=0.2, bbox_to_anchor=(0.5, 0), \
+                  bbox_transform=plt.gcf().transFigure, fontsize=font_size)
 
     plt.savefig(dir+'/rq1.pdf')
 
@@ -187,6 +197,7 @@ eixo x nivel de noise
 eixo y: f-measure para provedor 
 '''
 def save_results_plot_RQ2(data,main_path, noise_levels):
+    font_size_rq2 = font_size - 5
     df = pd.DataFrame(data)
     df_rq2 = df[['provider', 'noise_level', 'fmeasure','noise_algorithm']]
     group = df_rq2[df_rq2['noise_algorithm'] != 'no_noise']
@@ -196,16 +207,24 @@ def save_results_plot_RQ2(data,main_path, noise_levels):
         plt.xlabel("noise levels")
         plt.ylabel("f-measure")
 
+        ax.xaxis.label.set_fontsize(font_size_rq2)
+        ax.yaxis.label.set_fontsize(font_size_rq2)
+        ax.tick_params(axis='both', which='major', labelsize=font_size_rq2)
+        
         ax.set_xticks(noise_levels)
+        ax.set_xticklabels([str(x).replace('0.', '.') for x in np.round(ax.get_xticks(), 3)])
         ax.set_xlim(0.1, max(noise_levels))
         ax.set_ylim(0, 1)
 
         dir = main_path
         Path(dir).mkdir(parents=True, exist_ok=True)
         for provider in group['provider'].unique():
+            ax.set_title(label=noise.capitalize(), fontdict={'fontsize':font_size_rq2})
+
             sample = group[group['provider'] == provider]
             sample = sample.sort_values(by=['noise_level'], ascending=True)
-            fig2 = sample.plot(ax=ax, xlabel='noise level', x='noise_level', y='fmeasure', title=noise, label=provider).get_figure()
+            fig2 = sample.plot(ax=ax, xlabel='noise level', x='noise_level', y='fmeasure', label=provider.capitalize()).get_figure()
+            plt.legend(prop={'size': font_size_rq2})
             fig.tight_layout() 
         fig2.savefig(dir+'/'+noise+'.jpg', transparent=False, dpi=250)
         fig2.savefig(dir+'/'+noise+'.pdf')
