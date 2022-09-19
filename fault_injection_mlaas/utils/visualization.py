@@ -154,7 +154,7 @@ def save_results_plot_RQ1(data,main_path, noise_levels):
         ax.set_title(label=provider.capitalize(), fontdict={'fontsize':font_size})
 
         ax.set_xticks(noise_levels)
-        ax.set_xticklabels([str(x)[1:] for x in np.round(ax.get_xticks(), 3)])
+        ax.set_xticklabels([str(x).replace('0.', '.') for x in np.round(ax.get_xticks(), 3)])
         ax.set_xlim(0, max(noise_levels))
         ax.set_ylim(0, 1)
         markers = itertools.cycle(['>', '+', '.', 'o', '*', 's'])
