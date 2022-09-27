@@ -8,19 +8,22 @@ import itertools
 from pandas.io.formats.style import Styler
 from utils.dataframe import divide_dataframe
 
+pd.set_option('mode.chained_assignment', None)
+
 font_size=21
 
 def format_number(number: float):
     f = '{0:.2g}'.format(number)
     return f
 
-def _prepare_table_to_latex(df):
-    df['noise_level'] = df['noise_level'].map(float)
-    df['fmeasure'] = df['fmeasure'].map(format_number)
+def _prepare_table_to_latex(df, percent=True):
     df = df[['provider', 'noise_algorithm', 'noise_level', 'fmeasure']]
+    df.loc[:, 'noise_level'] = df['noise_level'].map(float)
+    df.loc[:, 'fmeasure'] = df['fmeasure'].map(format_number)
     # df['noise_level'] = df['noise_level'].map(float)
-    df['noise_level'] = df['noise_level'].map(lambda a: a * 100)
-    df['noise_level'] = df['noise_level'].map(format_number)
+    if percent:
+        df.loc[:, 'noise_level'] = df['noise_level'].map(lambda a: a * 100)
+    df.loc[:, 'noise_level'] = df['noise_level'].map(format_number)
 
     df = df.replace('_', ' ', regex=True)
     df.provider = df.provider.str.capitalize()
@@ -33,13 +36,13 @@ def _prepare_table_to_latex(df):
     
     return df
 
-def plot_results(results_array, main_path):
+def plot_results(results_array, main_path, percent_noise=True):
     df = pd.DataFrame(results_array)
     df = df[['provider', 'noise_algorithm','noise_level', 'fmeasure', 'confusion_matrix']]
-    df = df[df['noise_algorithm'] != 'no noise']
+    df = df[df['noise_algorithm'] != 'no_noise']
 
-    save_latex_table(df, main_path)
-    save_summary_table(df, main_path)
+    save_latex_table(df, main_path, percent_noise)
+    save_summary_table(df, main_path, percent_noise)
     df['noise_level']= df['noise_level'].map(str)
     save_results_to_excel_file(df, main_path)
     save_results_to_file(results_array, main_path)
@@ -50,22 +53,37 @@ def highlight_max(x):
     return ['font-weight: bold' if v == x.loc[4] else ''
                 for v in x]
 
-def save_summary_table(df: pd.DataFrame, main_path):
-    Path(main_path).mkdir(parents=True, exist_ok=True)
+def save_summary_table(df: pd.DataFrame, main_path, percent_noise):
+    noise_order =list(df['noise_algorithm'].unique())
 
-    df = _prepare_table_to_latex(df)
+    provider_order = list(df['provider'].apply(lambda x: x.capitalize())
+                          .sort_values()
+                          .unique())
+                          
+    def sorting(item):
+        index = None
+        try:
+            index = noise_order.index(item)
+        except:
+            index = provider_order.index(item)
+        return index
+
+    Path(main_path).mkdir(parents=True, exist_ok=True)
+    
+    df = _prepare_table_to_latex(df, percent_noise)
 
     df = df[['Noise Algorithm', 'Provider',
              'Noise Level (%)', 'F-Measure']]
 
     df = df.pivot(values='F-Measure', index=[
         'Noise Algorithm', 'Provider'], columns='Noise Level (%)')
-    
+    df = df.sort_values(by=['Noise Algorithm', 'Provider'],
+                        key=lambda x: x.map(sorting))
+
     df.columns = pd.MultiIndex.from_tuples(
         [('Noise Level (%)', noise) for noise in df.columns])
     
     df.index.names = [None, None]
-
     filename = main_path + f'/table_latex_rq2_summary.txt'
 
     # TODO: add highlight to min and max values
@@ -82,12 +100,12 @@ def save_summary_table(df: pd.DataFrame, main_path):
             multirow_align="t",
             multicol_align="c",
             convert_css=True,
-            caption='Noise Level (%)'
+            caption='RQ2 - F-Measure variation according to Noise Level (%)'
         )
 
     table_latex = table_latex.replace('%', '\%')
     table_latex = table_latex.replace(
-        "\\begin{tabular}", "\small \n \\begin{tabular}")
+        "\\begin{tabular}", "\\tiny \n \\begin{tabular}")
     
     # change \midrule location
     lines = table_latex.split('\n')
@@ -101,15 +119,21 @@ def save_summary_table(df: pd.DataFrame, main_path):
 
     return table_latex
 
-def save_latex_table(df: pd.DataFrame, main_path):
+def save_latex_table(df: pd.DataFrame, main_path, percent_noise):
     Path(main_path).mkdir(parents=True, exist_ok=True)
 
-    df = _prepare_table_to_latex(df)
+    df = _prepare_table_to_latex(df, percent_noise)
+    df.loc[:, 'Noise Level (%)'] = pd.to_numeric(df['Noise Level (%)'])
 
     group: pd.DataFrame
     for provider, group in df.groupby('Provider'):
         provider = provider.capitalize()
         group = group[["Noise Algorithm","Noise Level (%)", "F-Measure"]]
+
+        group = group.set_index(['Noise Algorithm'])
+        group = group.groupby('Noise Algorithm').apply(
+            lambda x: x.sort_values(by=['Noise Level (%)']))
+        group = group.reset_index()
 
         group = divide_dataframe(group)
 
@@ -129,6 +153,9 @@ def save_latex_table(df: pd.DataFrame, main_path):
         # on duplicating columns to save space (divide_dataframe), is added __1 to prevent duplicated columns
         table_latex = table_latex.replace('__1', '')
         table_latex = table_latex.replace('%', '\%')
+
+        table_latex = table_latex.replace(
+            "\\begin{tabular}", "\\tiny \n \\begin{tabular}")
 
         with open(filename, 'w+') as f:
             f.write(table_latex)
