@@ -19,7 +19,7 @@ def format_number(number: float):
 def _prepare_table_to_latex(df, percent=True):
     df = df[['provider', 'noise_algorithm', 'noise_level', 'fmeasure']]
     df.loc[:, 'noise_level'] = df['noise_level'].map(float)
-    df.loc[:, 'fmeasure'] = df['fmeasure'].map(format_number)
+    # df.loc[:, 'fmeasure'] = df['fmeasure'].map(format_number)
     # df['noise_level'] = df['noise_level'].map(float)
     if percent:
         df.loc[:, 'noise_level'] = df['noise_level'].map(lambda a: a * 100)
@@ -52,6 +52,20 @@ def plot_results(results_array, main_path, percent_noise=True):
 def highlight_max(x):
     return ['font-weight: bold' if v == x.loc[4] else ''
                 for v in x]
+
+def highlight_extreme_values(data: pd.Series, format_string="%.2f"):
+    extrema_max = data != data.max()
+    extrema_min = data != data.min()
+
+    highlighted_red = data.apply(
+        lambda x: "{\\color{red} {%s}}" % format_string % float(x))
+    highlighted_green = data.apply(
+        lambda x: "{\\color[rgb]{0.17,0.70,0.17} {%s}}" % format_string % float(x))
+
+    formatted = data.apply(lambda x: format_string % float(x))
+
+    return formatted.where(extrema_min, highlighted_red)\
+                    .where(extrema_max, highlighted_green)
 
 def save_summary_table(df: pd.DataFrame, main_path, percent_noise):
     noise_order =list(df['noise_algorithm'].unique())
@@ -86,8 +100,8 @@ def save_summary_table(df: pd.DataFrame, main_path, percent_noise):
     df.index.names = [None, None]
     filename = main_path + f'/table_latex_rq2_summary.txt'
 
-    # TODO: add highlight to min and max values
     table_latex: str = df.style \
+        .background_gradient(cmap='RdYlGn', axis=None, low=0, high=1.0) \
         .set_properties(**{'font-size': '4px'}) \
         .format(precision=2) \
         .applymap_index(lambda v: "font-weight: bold;", axis="index", level=0) \
