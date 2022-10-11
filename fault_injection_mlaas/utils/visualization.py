@@ -42,7 +42,7 @@ def plot_results(results_array, main_path, percent_noise=True):
     df = df[df['noise_algorithm'] != 'no_noise']
 
     save_latex_table(df, main_path, percent_noise)
-    save_summary_table(df, main_path, percent_noise)
+    save_summary_table_rq2(df, main_path, percent_noise)
     df['noise_level']= df['noise_level'].map(str)
     save_results_to_excel_file(df, main_path)
     save_results_to_file(results_array, main_path)
@@ -67,7 +67,7 @@ def highlight_extreme_values(data: pd.Series, format_string="%.2f"):
     return formatted.where(extrema_min, highlighted_red)\
                     .where(extrema_max, highlighted_green)
 
-def save_summary_table(df: pd.DataFrame, main_path, percent_noise):
+def save_summary_table_rq2(df: pd.DataFrame, main_path, percent_noise):
     noise_order =list(df['noise_algorithm'].unique())
 
     provider_order = list(df['provider'].apply(lambda x: x.capitalize())
@@ -254,6 +254,17 @@ def save_results_plot_RQ1(data,main_path, noise_levels):
 
     for provider, group in df_rq1.groupby('provider'):
         group = group[group['noise_algorithm'] != 'no_noise']
+        
+        worst_line = group[['provider', 'noise_level', 'fmeasure']] \
+            .groupby('noise_level') \
+            .min() \
+            .reset_index()
+        
+        mean_line = group[['provider', 'noise_level', 'fmeasure']] \
+            .groupby('noise_level') \
+            .mean() \
+            .reset_index()
+
         ax = next(axes)
         # setup axis
         plt.xlabel("noise levels")
@@ -278,10 +289,17 @@ def save_results_plot_RQ1(data,main_path, noise_levels):
 
             fig2 = sample.plot(legend=None, ax=ax, marker=next(markers), markersize=7, \
                                xlabel='noise level', x='noise_level', y='fmeasure', \
-                                label=algorithm,
+                               label=algorithm,
                                figsize=(15,7.5),
                     )
-                    
+        ax.plot('noise_level', 'fmeasure', 
+                label='Worst', data=worst_line,
+                color='red', linewidth=2,
+                linestyle='dashed')
+        ax.plot('noise_level', 'fmeasure',
+                label='Mean', data=mean_line,
+                color='darkorange', linewidth=2,
+                linestyle='dashed')    
     
     lines_labels = axes_list[0].get_legend_handles_labels()
     lines, labels = [sum(lol, []) for lol in zip(lines_labels)]
