@@ -245,21 +245,21 @@ RQ1
 axis x: noise level
 axis y: f-measure of each noise
 '''
-def save_results_plot_RQ1(data,main_path, noise_levels):
+def save_results_plot_RQ1_raw_fmeasure(data,main_path, noise_levels):
     df = pd.DataFrame(data)
-    df_rq1 = df[['provider', 'noise_level', 'fmeasure','noise_algorithm']]
-    
+    df_rq1 = df[['provider', 'noise_level', 'fmeasure', 'noise_algorithm']]
+
     fig, axes_list = plt.subplots(ncols=len(df_rq1.groupby('provider')))
     axes = iter(axes_list)
 
     for provider, group in df_rq1.groupby('provider'):
         group = group[group['noise_algorithm'] != 'no_noise']
-        
+
         worst_line = group[['provider', 'noise_level', 'fmeasure']] \
             .groupby('noise_level') \
             .min() \
             .reset_index()
-        
+
         mean_line = group[['provider', 'noise_level', 'fmeasure']] \
             .groupby('noise_level') \
             .mean() \
@@ -273,40 +273,42 @@ def save_results_plot_RQ1(data,main_path, noise_levels):
         ax.xaxis.label.set_fontsize(font_size)
         ax.yaxis.label.set_fontsize(font_size)
         ax.tick_params(axis='both', which='major', labelsize=font_size)
-        ax.set_title(label=provider.capitalize(), fontdict={'fontsize':font_size})
+        ax.set_title(label=provider.capitalize(),
+                     fontdict={'fontsize': font_size})
 
         ax.set_xticks(noise_levels)
-        ax.set_xticklabels([str(x).replace('0.', '.') for x in np.round(ax.get_xticks(), 3)])
+        ax.set_xticklabels([str(x).replace('0.', '.')
+                           for x in np.round(ax.get_xticks(), 3)])
         ax.set_xlim(0, max(noise_levels))
         ax.set_ylim(0, 1)
         markers = itertools.cycle(['>', '+', '.', 'o', '*', 's'])
-        
+
         dir = main_path
         Path(dir).mkdir(parents=True, exist_ok=True)
         for algorithm in group['noise_algorithm'].unique():
             sample: pd.DataFrame = group[group['noise_algorithm'] == algorithm]
             sample = sample.sort_values(by=['noise_level'], ascending=True)
 
-            fig2 = sample.plot(legend=None, ax=ax, marker=next(markers), markersize=7, \
-                               xlabel='noise level', x='noise_level', y='fmeasure', \
+            fig2 = sample.plot(legend=None, ax=ax, marker=next(markers), markersize=7,
+                               xlabel='noise level', x='noise_level', y='fmeasure',
                                label=algorithm,
-                               figsize=(15,7.5),
-                    )
-        ax.plot('noise_level', 'fmeasure', 
+                               figsize=(15, 7.5),
+                               )
+        ax.plot('noise_level', 'fmeasure',
                 label='Worst', data=worst_line,
                 color='red', linewidth=2,
                 linestyle='dashed')
         ax.plot('noise_level', 'fmeasure',
                 label='Mean', data=mean_line,
                 color='darkorange', linewidth=2,
-                linestyle='dashed')    
-    
+                linestyle='dashed')
+
     lines_labels = axes_list[0].get_legend_handles_labels()
     lines, labels = [sum(lol, []) for lol in zip(lines_labels)]
     plt.tight_layout()
-    plt.subplots_adjust(bottom=0.33, wspace=0.3, hspace=0)
-    plt.figlegend(lines, labels, loc = 'lower center', \
-                  ncol=3, labelspacing=0.2, bbox_to_anchor=(0.5, 0), \
+    plt.subplots_adjust(bottom=0.38, wspace=0.3, hspace=0)
+    plt.figlegend(lines, labels, loc='lower center',
+                  ncol=3, labelspacing=0.2, bbox_to_anchor=(0.5, 0),
                   bbox_transform=plt.gcf().transFigure, fontsize=font_size)
 
     plt.savefig(dir+'/rq1.pdf')
@@ -315,10 +317,86 @@ def save_results_plot_RQ1(data,main_path, noise_levels):
         axe.legend(loc='upper left', framealpha=0.5)
 
     fig.savefig(dir+'/rq1_full.jpg', transparent=False, dpi=250)
-    
+
     plt.close('all')
 
     return fig
+
+
+'''
+RQ1 
+3 plots, 1 per provider: 
+axis x: noise level
+axis y: f-measure of each noise
+'''
+def save_results_plot_RQ1_fmeasure_drop(data, main_path, noise_levels):
+    df = pd.DataFrame(data)
+    df_rq1 = df[['provider', 'noise_level', 'fmeasure', 'noise_algorithm']]
+
+    fig, axes_list = plt.subplots(ncols=len(df_rq1.groupby('provider')))
+    axes = iter(axes_list)
+
+    for provider, group in df_rq1.groupby('provider'):
+        group = group[group['noise_algorithm'] != 'no_noise']
+
+        ax = next(axes)
+        # setup axis
+        plt.xlabel("noise levels")
+        ax.set_ylabel("f-measure drop")
+
+        ax.xaxis.label.set_fontsize(font_size)
+        ax.yaxis.label.set_fontsize(font_size)
+        ax.tick_params(axis='both', which='major', labelsize=font_size)
+        ax.set_title(label=provider.capitalize(),
+                     fontdict={'fontsize': font_size})
+
+        ax.set_xticks(noise_levels)
+        ax.set_xticklabels([str(x).replace('0.', '.')
+                           for x in np.round(ax.get_xticks(), 3)])
+        ax.set_xlim(0, max(noise_levels))
+        ax.set_ylim(0, 1)
+        markers = itertools.cycle(['>', '+', '.', 'o', '*', 's'])
+
+        dir = main_path
+        Path(dir).mkdir(parents=True, exist_ok=True)
+        for algorithm in group['noise_algorithm'].unique():
+            sample: pd.DataFrame = group[group['noise_algorithm'] == algorithm]
+
+            no_noise_value = sample[sample['noise_level'] == 0]
+            sample['fmeasure drop'] = no_noise_value.iloc[0]['fmeasure'] - sample['fmeasure'] 
+
+            sample = sample.drop(columns=['fmeasure'])
+            sample = sample.sort_values(by=['noise_level'], ascending=True)
+
+            fig2 = sample.plot(legend=None, ax=ax, marker=next(markers), markersize=7,
+                               xlabel='noise level', x='noise_level', y='fmeasure drop',
+                               label=algorithm,
+                               figsize=(15, 7.5),
+                               )
+
+    lines_labels = axes_list[0].get_legend_handles_labels()
+    lines, labels = [sum(lol, []) for lol in zip(lines_labels)]
+    plt.tight_layout()
+    plt.subplots_adjust(bottom=0.33, wspace=0.3, hspace=0)
+    plt.figlegend(lines, labels, loc='lower center',
+                  ncol=3, labelspacing=0.2, bbox_to_anchor=(0.5, 0),
+                  bbox_transform=plt.gcf().transFigure, fontsize=font_size)
+
+    plt.savefig(dir+'/rq1_drop.pdf')
+
+    for axe in axes_list:
+        axe.legend(loc='upper left', framealpha=0.5)
+
+    fig.savefig(dir+'/rq1_drop_full.jpg', transparent=False, dpi=250)
+
+    plt.close('all')
+
+    return fig
+
+def save_results_plot_RQ1(data,main_path, noise_levels):
+    save_results_plot_RQ1_raw_fmeasure(data, main_path, noise_levels)
+    save_results_plot_RQ1_fmeasure_drop(data, main_path, noise_levels)
+
 '''
 RQ2 
 1 grafico para cada noise 
