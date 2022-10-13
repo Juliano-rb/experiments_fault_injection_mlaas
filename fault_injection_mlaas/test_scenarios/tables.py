@@ -20,7 +20,7 @@ noise_original_order = list(metricsrq1['noise_algorithm'].unique())
 provider_original_order = list(metricsrq1['provider'].apply(
     lambda x: x.capitalize()).sort_values().unique())
 
-output1: pd.DataFrame = visualization.save_summary_table_rq2(
+output1: pd.DataFrame = visualization.save_summary_table(
     metricsrq1, "./test_scenarios/out/1_table", percent_noise=True)
 
 
