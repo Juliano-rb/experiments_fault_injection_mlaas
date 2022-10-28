@@ -32,7 +32,7 @@ def _prepare_table_to_latex(df, percent=True):
     df = df.rename(columns={
         "provider": "Provider",
         "noise_algorithm": "Noise Algorithm",
-        "noise_level": "Noise Level (%)",
+        "noise_level": "Noise Level",
         "fmeasure": "F-Measure"})
     
     return df
@@ -73,16 +73,19 @@ def save_summary_table(df: pd.DataFrame, main_path, percent_noise):
     
     df = _prepare_table_to_latex(df, percent_noise)
 
+    noise_column_name = 'Noise Level' + (' (%)' if percent_noise else ' (UN)')
+    df = df.rename(columns={"Noise Level": noise_column_name})
+
     df = df[['Noise Algorithm', 'Provider',
-             'Noise Level (%)', 'F-Measure']]
+             noise_column_name, 'F-Measure']]
 
     df = df.pivot(values='F-Measure', index=[
-        'Noise Algorithm', 'Provider'], columns='Noise Level (%)')
+        'Noise Algorithm', 'Provider'], columns=noise_column_name)
     df = df.sort_values(by=['Noise Algorithm', 'Provider'],
                         key=lambda x: x.map(sorting))
 
     df.columns = pd.MultiIndex.from_tuples(
-        [('Noise Level (%)', noise) for noise in df.columns])
+        [(noise_column_name, noise) for noise in df.columns])
     
     df.index.names = [None, None]
     filename = main_path + f'/table_latex_rq2_summary.txt'
@@ -124,16 +127,20 @@ def save_latex_table(df: pd.DataFrame, main_path, percent_noise):
     Path(main_path).mkdir(parents=True, exist_ok=True)
 
     df = _prepare_table_to_latex(df, percent_noise)
-    df.loc[:, 'Noise Level (%)'] = pd.to_numeric(df['Noise Level (%)'])
+
+    noise_column_name = 'Noise Level' + (' (%)' if percent_noise else ' (UN)')
+    df = df.rename(columns={"Noise Level": noise_column_name})
+
+    df.loc[:, noise_column_name] = pd.to_numeric(df[noise_column_name])
 
     group: pd.DataFrame
     for provider, group in df.groupby('Provider'):
         provider = provider.capitalize()
-        group = group[["Noise Algorithm","Noise Level (%)", "F-Measure"]]
+        group = group[["Noise Algorithm", noise_column_name, "F-Measure"]]
 
         group = group.set_index(['Noise Algorithm'])
         group = group.groupby('Noise Algorithm').apply(
-            lambda x: x.sort_values(by=['Noise Level (%)']))
+            lambda x: x.sort_values(by=[noise_column_name]))
         group = group.reset_index()
 
         group = divide_dataframe(group)
@@ -173,7 +180,7 @@ def save_results_to_excel_file(df, main_path):
     df = df.rename(columns={
         "provider": "Provider",
         "noise_algorithm": "Noise Algorithm",
-        "noise_level": "Noise Level (%)",
+        "noise_level": "Noise Level",
         "fmeasure": "F-Measure"})
 
     filename = main_path + '/data_excel.xlsx'
