@@ -1,0 +1,78 @@
+\begin{table}[h]
+\centering
+\caption{Results of Google provider}
+\label{table:results_Google}
+\tiny 
+ \begin{tabular}{rrr|rrr}
+\toprule
+Noise Algorithm & Noise Level (\%) & F-Measure & Noise Algorithm & Noise Level (\%) & F-Measure \\
+\midrule
+Keyboard & 0 & 0.63 & Antonym & 0 & 0.63 \\
+Keyboard & 1 & 0.63 & Antonym & 1 & 0.51 \\
+Keyboard & 2 & 0.59 & Antonym & 2 & 0.52 \\
+Keyboard & 3 & 0.63 & Antonym & 3 & 0.46 \\
+Keyboard & 4 & 0.65 & Antonym & 4 & 0.46 \\
+Keyboard & 5 & 0.61 & Antonym & 5 & 0.49 \\
+Keyboard & 6 & 0.52 & Antonym & 6 & 0.50 \\
+Keyboard & 7 & 0.58 & Antonym & 7 & 0.51 \\
+Keyboard & 8 & 0.60 & Antonym & 8 & 0.48 \\
+Keyboard & 9 & 0.56 & Antonym & 9 & 0.50 \\
+Keyboard & 10 & 0.56 & Antonym & 10 & 0.49 \\
+OCR & 0 & 0.63 & Synonym & 0 & 0.63 \\
+OCR & 1 & 0.60 & Synonym & 1 & 0.65 \\
+OCR & 2 & 0.62 & Synonym & 2 & 0.56 \\
+OCR & 3 & 0.59 & Synonym & 3 & 0.66 \\
+OCR & 4 & 0.56 & Synonym & 4 & 0.58 \\
+OCR & 5 & 0.57 & Synonym & 5 & 0.61 \\
+OCR & 6 & 0.55 & Synonym & 6 & 0.62 \\
+OCR & 7 & 0.60 & Synonym & 7 & 0.59 \\
+OCR & 8 & 0.56 & Synonym & 8 & 0.54 \\
+OCR & 9 & 0.55 & Synonym & 9 & 0.51 \\
+OCR & 10 & 0.43 & Synonym & 10 & 0.53 \\
+RandomCharReplace & 0 & 0.63 & Spelling & 0 & 0.63 \\
+RandomCharReplace & 1 & 0.60 & Spelling & 1 & 0.63 \\
+RandomCharReplace & 2 & 0.62 & Spelling & 2 & 0.61 \\
+RandomCharReplace & 3 & 0.52 & Spelling & 3 & 0.62 \\
+RandomCharReplace & 4 & 0.62 & Spelling & 4 & 0.59 \\
+RandomCharReplace & 5 & 0.58 & Spelling & 5 & 0.63 \\
+RandomCharReplace & 6 & 0.61 & Spelling & 6 & 0.57 \\
+RandomCharReplace & 7 & 0.54 & Spelling & 7 & 0.51 \\
+RandomCharReplace & 8 & 0.53 & Spelling & 8 & 0.62 \\
+RandomCharReplace & 9 & 0.56 & Spelling & 9 & 0.54 \\
+RandomCharReplace & 10 & 0.48 & Spelling & 10 & 0.52 \\
+CharSwap & 0 & 0.63 & TfIdfWord & 0 & 0.63 \\
+CharSwap & 1 & 0.66 & TfIdfWord & 1 & 0.65 \\
+CharSwap & 2 & 0.63 & TfIdfWord & 2 & 0.62 \\
+CharSwap & 3 & 0.63 & TfIdfWord & 3 & 0.59 \\
+CharSwap & 4 & 0.61 & TfIdfWord & 4 & 0.56 \\
+CharSwap & 5 & 0.58 & TfIdfWord & 5 & 0.53 \\
+CharSwap & 6 & 0.64 & TfIdfWord & 6 & 0.53 \\
+CharSwap & 7 & 0.58 & TfIdfWord & 7 & 0.51 \\
+CharSwap & 8 & 0.55 & TfIdfWord & 8 & 0.58 \\
+CharSwap & 9 & 0.62 & TfIdfWord & 9 & 0.46 \\
+CharSwap & 10 & 0.58 & TfIdfWord & 10 & 0.50 \\
+WordSwap & 0 & 0.63 & WordEmbeddings & 0 & 0.63 \\
+WordSwap & 1 & 0.61 & WordEmbeddings & 1 & 0.64 \\
+WordSwap & 2 & 0.60 & WordEmbeddings & 2 & 0.58 \\
+WordSwap & 3 & 0.63 & WordEmbeddings & 3 & 0.50 \\
+WordSwap & 4 & 0.59 & WordEmbeddings & 4 & 0.51 \\
+WordSwap & 5 & 0.65 & WordEmbeddings & 5 & 0.61 \\
+WordSwap & 6 & 0.62 & WordEmbeddings & 6 & 0.56 \\
+WordSwap & 7 & 0.63 & WordEmbeddings & 7 & 0.47 \\
+WordSwap & 8 & 0.55 & WordEmbeddings & 8 & 0.52 \\
+WordSwap & 9 & 0.59 & WordEmbeddings & 9 & 0.51 \\
+WordSwap & 10 & 0.63 & WordEmbeddings & 10 & 0.48 \\
+WordSplit & 0 & 0.63 & ContextualWordEmbs & 0 & 0.63 \\
+WordSplit & 1 & 0.65 & ContextualWordEmbs & 1 & 0.63 \\
+WordSplit & 2 & 0.62 & ContextualWordEmbs & 2 & 0.66 \\
+WordSplit & 3 & 0.66 & ContextualWordEmbs & 3 & 0.58 \\
+WordSplit & 4 & 0.64 & ContextualWordEmbs & 4 & 0.54 \\
+WordSplit & 5 & 0.58 & ContextualWordEmbs & 5 & 0.59 \\
+WordSplit & 6 & 0.57 & ContextualWordEmbs & 6 & 0.54 \\
+WordSplit & 7 & 0.53 & ContextualWordEmbs & 7 & 0.58 \\
+WordSplit & 8 & 0.56 & ContextualWordEmbs & 8 & 0.61 \\
+WordSplit & 9 & 0.52 & ContextualWordEmbs & 9 & 0.56 \\
+WordSplit & 10 & 0.38 & ContextualWordEmbs & 10 & 0.59 \\
+\bottomrule
+\end{tabular}
+\end{table}
