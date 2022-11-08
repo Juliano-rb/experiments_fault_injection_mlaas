@@ -1,20 +1,15 @@
 from noise_insertion.percent_insertion import noises
 from noise_insertion.utils import save_data_to_file
 import sys
+import nltk
 sys.path.append(".")
 from progress import progress_manager
 
-'''
-1. Gerar o ruídos:
-   .Entrada = Dataset inteiro
-   .Saída = dataset.csv amostragem do dataset, dataset-0.X.csv para cada noise aplicado
-    --Timestamp_sizeX
-    ----data
-    ------original
-    --------dataset.csv
-    ------ocr
-    --------dataset-0.1.csv, dataset-0.2.csv,...
-'''
+# after first execution can be ommited
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+nltk.download('punkt')
 
 def generate_noised_dataset(x, noise_level, noise_func):
     x_noised = noise_func(x,aug_level=noise_level)
@@ -45,6 +40,16 @@ def get_noise_levels(progress, algorithm):
     return noise_levels_filtered
 
 def generate_noised_data(x_dataset, main_path, noise_package=noises):
+    """Generate a noised version of the dataset and saves it in main_ path
+
+    Args:
+        x_dataset (list[str]): a list with sentences
+        main_path (str): destination path
+        noise_package (object with noise functions, optional): noise generation functions. Defaults to noises.
+
+    Returns:
+        Dictionary: new progress file
+    """
     progress = progress_manager.load_progress(main_path)
     noise_algorithms_input = list(progress['noise'].keys())
     noise_algorithms = get_noise_instances(noise_algorithms_input, noise_package)
@@ -56,9 +61,11 @@ def generate_noised_data(x_dataset, main_path, noise_package=noises):
         noise_levels = get_noise_levels(progress, algorithm_name)
 
         progress["noise"][algorithm_name]["0.0"]= main_path + "/data/dataset.xlsx"
+
+        print("-- ", end='')
         for k in range(0, len(noise_levels)):
             level = noise_levels[k]
-            print('--', level)
+            print(level, ', ', end='')
             if noise_algorithms[j] == noises.no_noise:
                 level = 0
             noised_dataset = generate_noised_dataset(x_dataset, level, algorithm)
@@ -69,4 +76,5 @@ def generate_noised_data(x_dataset, main_path, noise_package=noises):
 
             progress["noise"][algorithm_name][str(level)]=path+'/'+file_name+".xlsx"
             progress_manager.save_progress(main_path, progress)
+        print('')
     return progress

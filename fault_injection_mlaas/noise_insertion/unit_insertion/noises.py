@@ -212,13 +212,3 @@ def SentenceShuffle(text_lists, aug_level=4):
     augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
 
     return augmented_texts
-
-# def BackTranslation(text_lists, aug_level=4):
-#     aug = naw.BackTranslationAug(device='cpu',
-#                                  max_length=200,
-#                                  batch_size=1,
-#                                  force_reload=True)
-
-#     augmented_texts = aug.augment(text_lists, n=1, num_thread=1)
-
-#     return augmented_texts

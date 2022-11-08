@@ -54,14 +54,8 @@ def highlight_max(x):
     return ['font-weight: bold' if v == x.loc[4] else ''
                 for v in x]
 
-def save_summary_table(df: pd.DataFrame, main_path, percent_noise):
-    noise_order =list(df['noise_algorithm'].unique())
-
-    provider_order = list(df['provider'].apply(lambda x: x.capitalize())
-                          .sort_values()
-                          .unique())
-                          
-    def sorting(item):
+def save_summary_table(df: pd.DataFrame, main_path, percent_noise):             
+    def sorting(item, noise_order, provider_order):
         index = None
         try:
             index = noise_order.index(item)
@@ -73,6 +67,10 @@ def save_summary_table(df: pd.DataFrame, main_path, percent_noise):
     
     df = _prepare_table_to_latex(df, percent_noise)
 
+    noise_order =list(df["Noise Algorithm"].unique())
+    provider_order = list(df['Provider'].apply(lambda x: x.capitalize())
+                          .sort_values()
+                          .unique())
     noise_column_name = 'Noise Level' + (' (%)' if percent_noise else ' (UN)')
     df = df.rename(columns={"Noise Level": noise_column_name})
 
@@ -82,7 +80,7 @@ def save_summary_table(df: pd.DataFrame, main_path, percent_noise):
     df = df.pivot(values='F-Measure', index=[
         'Noise Algorithm', 'Provider'], columns=noise_column_name)
     df = df.sort_values(by=['Noise Algorithm', 'Provider'],
-                        key=lambda x: x.map(sorting))
+                        key=lambda x: x.map(lambda s: sorting(s, noise_order, provider_order)))
 
     df.columns = pd.MultiIndex.from_tuples(
         [(noise_column_name, noise) for noise in df.columns])

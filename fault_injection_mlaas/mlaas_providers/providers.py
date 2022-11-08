@@ -123,13 +123,15 @@ def get_prediction_results(main_path):
             persist_predictions(provider_algo, noise, "0.0", no_noise_predictions, main_path, progress )
             noise_levels_available = progress["predictions"][provider_algo.__name__][noise]
             noise_levels_available = get_available_noise_levels(noise_levels_available)
+
+            print('--- ', end="")
             for nlevel in noise_levels_available:
-                print('---', nlevel)
+                print(nlevel, ", ", end="")
                 dataset_path = noise_data[noise][str(nlevel)]
 
                 dataset = read_dataset(dataset_path)
                 predicted = provider_algo(dataset)
 
                 progress = persist_predictions(provider_algo, noise, str(nlevel), predicted, main_path, progress)
-
+            print('')
     return progress
