@@ -112,7 +112,7 @@ def gen_raw_values_table(df: pd.DataFrame, main_path, percent_noise):
         group = group[["Noise Algorithm", noise_column_name, "F-Measure"]]
 
         group = group.set_index(['Noise Algorithm'])
-        group = group.groupby('Noise Algorithm').apply(
+        group = group.groupby('Noise Algorithm', group_keys=False).apply(
             lambda x: x.sort_values(by=[noise_column_name]))
         group = group.reset_index()
 
