@@ -24,5 +24,5 @@ def denoise_text(text):
     if(len(text)> 5120):
         text = text[:5120]
     text = remove_between_square_brackets(text)
-    text = remove_special_characters(text)
+    # text = remove_special_characters(text)
     return text
