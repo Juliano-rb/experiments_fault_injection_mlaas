@@ -3,25 +3,27 @@ import queue
 from utils.requestQueue import RequestQueue
 import random
 
-def call_mocked_sentiment(review, client, result_queue):
-    try:
-        result = client(review["document"])
-        result_data = {'sentiment': result}
-
-        result_queue.put({"predictions":result_data, "index":review["index"]})
-    except Exception as e:
-        print("Error:", e)
-        print(review["document"])
-        raise e
-
-def arrange_results(result_list):
-    result_list.sort(key=lambda x: x["index"], reverse=False)
-
-    data = list(map(lambda x: x["predictions"], result_list))
-
-    return data
 class MockedSentimentAnalysis(SentimentAnalysis):
-    def run_naive_classifier(review, classes=['negative', 'neutral', 'positive']):
+    def arrange_results(self, result_list):
+        result_list.sort(key=lambda x: x["index"], reverse=False)
+
+        data = list(map(lambda x: x["predictions"], result_list))
+
+        return data
+
+    def call_mocked_sentiment(self, review, client, result_queue):
+        try:
+            result = client(review["document"])
+            result_data = {'sentiment': result}
+
+            result_queue.put({"predictions":result_data, "index":review["index"]})
+        except Exception as e:
+            print("Error:", e)
+            print(review["document"])
+            raise e
+
+    def run_naive_classifier(self, review):
+        classes=['negative', 'neutral', 'positive']
         # use the code above to simulate network latence
         # sleep(2)
         # use the code above to simulate api errors
@@ -36,7 +38,7 @@ class MockedSentimentAnalysis(SentimentAnalysis):
         documents = [{"document":doc, "index": i} for i,doc in enumerate(documents)] # dict
 
         result_queque = queue.Queue()
-        request_queue = RequestQueue(function_to_call=call_mocked_sentiment,
+        request_queue = RequestQueue(function_to_call=self.call_mocked_sentiment,
                                     iterate_args=documents,
                                     fixed_args=[self.run_naive_classifier, result_queque],
                                     call_rate=6000)
@@ -46,7 +48,7 @@ class MockedSentimentAnalysis(SentimentAnalysis):
         for i in range(len(documents)):
             results.append(result_queque.get())
         
-        results = arrange_results(results)
+        results = self.arrange_results(results)
         results = list(map(lambda r: r['sentiment'], results))
         
         return results
