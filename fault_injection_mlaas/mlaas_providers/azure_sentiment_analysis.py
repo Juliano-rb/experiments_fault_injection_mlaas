@@ -4,6 +4,7 @@ import sys
 from time import sleep
 import credentials
 import queue
+from mlaas_providers.sentiment_analysis import SentimentAnalysis
 from utils.requestQueue import RequestQueue
 
 def map_sentiment(result):
@@ -14,7 +15,7 @@ def map_sentiment(result):
     else:
         return 'neutral'
 
-class AzureSentimentAnalysis:
+class AzureSentimentAnalysis(SentimentAnalysis):
     def __init__(self):
         self.azure_text_analytics = self.authenticate_client()
 
@@ -41,7 +42,7 @@ class AzureSentimentAnalysis:
 
             result_queue.put({"predictions":sentiments, "index":data["index"]})
         except Exception as e:
-            print("Error:", e)
+            print("Error when calling client.analyze_sentiment:", e)
             print(data["documents"])
             raise e
 
@@ -53,13 +54,15 @@ class AzureSentimentAnalysis:
 
         return data
 
-    # chama o servico de classificação azure em grupos de 10 em 10
+    # calls azure classification service in groups of 10 sentences
     def classify_sentiments(self, documents, call_rate_param=30):
         chunks = []
         results = []
-        for i in range(0, len(documents), 10):
-            chunk = documents[i:i+10]
-            chunks.append({"documents":chunk, "index": i})
+
+        index = 0
+        for chunk in self.chunks(documents, 10):
+            chunks.append({"documents":chunk, "index": index})
+            index+=1
 
         result_queque = queue.Queue()
         request_queue = RequestQueue(function_to_call=self.sentiment_analysis_with_opinion_mining,
@@ -68,7 +71,7 @@ class AzureSentimentAnalysis:
                                     call_rate=call_rate_param)
         request_queue.run()
         if len(result_queque.queue) != len(chunks):
-            raise "error in one of the threads"
+            raise Exception("error in one of the threads")
 
         print('\r', end='')
 
