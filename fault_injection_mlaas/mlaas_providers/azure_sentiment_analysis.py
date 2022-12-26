@@ -33,9 +33,7 @@ class AzureSentimentAnalysis(SentimentAnalysis):
 
     def sentiment_analysis_with_opinion_mining(self, data, client, result_queue):
         try:
-            print('\r'+str(len(result_queue.queue)), end='')
             result = client.analyze_sentiment(data["documents"], show_opinion_mining=True)
-            # print(result)
             doc_result = [doc for doc in result if not doc.is_error]
 
             sentiments = list(map(map_sentiment, doc_result))
@@ -71,9 +69,7 @@ class AzureSentimentAnalysis(SentimentAnalysis):
                                     call_rate=call_rate_param)
         request_queue.run()
         if len(result_queque.queue) != len(chunks):
-            raise Exception("error in one of the threads")
-
-        print('\r', end='')
+            raise Exception("Error in one of the threads when calling client.analyze_sentiment")
 
         results = []
         while len(result_queque.queue)>0:
