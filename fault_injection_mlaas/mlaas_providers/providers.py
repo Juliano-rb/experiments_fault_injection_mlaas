@@ -5,6 +5,8 @@ import sys
 from time import sleep
 import types
 import pandas as pd
+
+from .mocked_sentiment_analysis import MockedSentimentAnalysis
 from .azure_sentiment_analysis import AzureSentimentAnalysis
 from .amazon_sentiment_analysis import AmazonSentimentAnalysis
 from .google_sentiment_analysis import GoogleSentimentAnalysis
@@ -26,23 +28,19 @@ def amazon(dataset):
     amazon = AmazonSentimentAnalysis()
     return amazon.classify(dataset)
 
-def run_naive_classifier(dataset, classes=['negative', 'neutral', 'positive']):
-    # sleep(2)
-    result = []
-    for i in range(len(dataset)):
-        result_index = random.randint(-1, 1) 
-        result.append( classes[result_index])
+def mocked(dataset):
+    mocked = MockedSentimentAnalysis()
+    return mocked.classify(dataset)
 
-    return result
 def return_mock_of(provider):
-    copy_func = types.FunctionType(run_naive_classifier.__code__,
-                            run_naive_classifier.__globals__,
+    copy_func = types.FunctionType(mocked.__code__,
+                            mocked.__globals__,
                             name=provider.__name__+'_mock',
-                            argdefs=run_naive_classifier.__defaults__,
-                            closure=run_naive_classifier.__closure__)
-    copy_func = functools.update_wrapper(copy_func, run_naive_classifier)
+                            argdefs=mocked.__defaults__,
+                            closure=mocked.__closure__)
+    copy_func = functools.update_wrapper(copy_func, mocked)
     copy_func.__name__ = provider.__name__+'_mock'
-    copy_func.__kwdefaults__ = run_naive_classifier.__kwdefaults__
+    copy_func.__kwdefaults__ = mocked.__kwdefaults__
     return copy_func
     
 ###############################

@@ -40,7 +40,7 @@ def get_noise_levels(progress, algorithm):
     return noise_levels_filtered
 
 def generate_noised_data(x_dataset, main_path, noise_package=noises):
-    """Generate a noised version of the dataset and saves it in main_ path
+    """Generate a noised version of the dataset and saves it in main_path
 
     Args:
         x_dataset (list[str]): a list with sentences

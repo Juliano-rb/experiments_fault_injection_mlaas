@@ -46,7 +46,7 @@ class DataSampling:
         
             When true, forces a balanced dataset result by reducing all classes to the one that has fewer instances.
         """
-        dataset: DataFrame = read_csv(dataset_name)
+        dataset: DataFrame = read_csv(dataset_name, encoding='utf-8')
         dataset = dataset[["airline_sentiment", "text"]]
 
         mask = (dataset["text"].str.len() >= min_width) & (dataset["text"].str.len() <= max_width)
@@ -91,7 +91,7 @@ class DataSampling:
         
             When true, forces a balanced dataset result by reducing all classes to the one that has fewer instances.
         """
-        dataset: DataFrame = read_csv(dataset_name)
+        dataset: DataFrame = read_csv(dataset_name, encoding='utf-8')
         dataset.rename(columns={"airline_sentiment": "sentiment"}, inplace=True)
         dataset = dataset[["sentiment", "text"]]
 

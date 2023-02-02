@@ -58,7 +58,7 @@ def RandomCharReplace(text_lists,aug_level=0.3):
                     aug_char_max=None,
                     tokenizer = tokenizer,
                     reverse_tokenizer=reverse_tokenizer,
-                    spec_char='!@#$%^&*()_+.' #checar se inclui o ponto
+                    spec_char='!@#$%^&*()_+.'
                     )
 
     augmented_texts = []

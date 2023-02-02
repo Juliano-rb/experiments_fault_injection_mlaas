@@ -32,7 +32,6 @@ def save_confusion_matrix(df, main_path):
                 fig.savefig(dir+'/confusion_matrix/'+noise+'/'+fig_title+'.jpg', transparent=False, dpi=250)
                 plt.clf()
 
-
 def save_results_plot(df,main_path):
     for provider, group in df.groupby('provider'):
         for noise, group in group.groupby('noise_algorithm'):
@@ -52,15 +51,53 @@ def save_results_plot(df,main_path):
 def gen_results_plots_RQ1(data,main_path, noise_levels):
     gen_result_plot_RQ1_raw_fmeasure(data, main_path, noise_levels)
     gen_result_plot_RQ1_fmeasure_drop(data, main_path, noise_levels)
+    gen_result_plot_RQ1_median_fmeasure(data, main_path, noise_levels)
 
-'''
-RQ1 
-3 plots, 1 per provider: 
-axis x: noise level
-axis y: f-measure of each noise
-'''
+def gen_result_plot_RQ1_median_fmeasure(data, main_path: str, noise_levels):
+    f_size = font_size - 4
+    # select and arrange data
+    df = pd.DataFrame(data)
+    df = df[['provider', 'noise_level', 'fmeasure', 'noise_algorithm']]
+    df['provider'] = df['provider'].str.capitalize()
+
+    medians = df.groupby(['provider', 'noise_level'])['fmeasure'] \
+                .median() \
+                .reset_index()
+    
+    medians = medians.pivot(index='noise_level', columns='provider', values='fmeasure')
+    # plot
+    ax = medians.plot(xlabel='noise level (%)',
+                      ylabel="f-measure")
+    ax.xaxis.label.set_fontsize(f_size)
+    ax.yaxis.label.set_fontsize(f_size)
+    ax.legend(prop={'size': f_size-2})
+    ax.tick_params(axis='both', which='major', labelsize=f_size)
+    ax.set_title(label="Providers f-measure median",
+                fontdict={'fontsize': f_size})
+    ax.set_xticks(noise_levels)
+    ax.set_xticklabels([str(x).replace('0.', '.')
+                        for x in np.round(ax.get_xticks(), 3)])
+    ax.set_xlim(0, max(noise_levels))
+    ax.set_ylim(0, 1)
+
+    plt.tight_layout()
+
+    # save to disk
+    Path(main_path).mkdir(parents=True, exist_ok=True)
+    plt.savefig(main_path+'/rq1_medians.pdf')
+    plt.savefig(main_path+'/rq1_medians.jpg', transparent=False, dpi=250)
+    plt.close('all')
+
+    return ax
+
 # OBS: used in RQ1 and RQ3
-def gen_result_plot_RQ1_raw_fmeasure(data,main_path, noise_levels):
+def gen_result_plot_RQ1_raw_fmeasure(data, main_path, noise_levels):
+    '''
+    RQ1 
+    3 plots, 1 per provider: 
+    axis x: noise level
+    axis y: f-measure of each noise
+    '''
     df = pd.DataFrame(data)
     df_rq1 = df[['provider', 'noise_level', 'fmeasure', 'noise_algorithm']]
 
@@ -77,12 +114,12 @@ def gen_result_plot_RQ1_raw_fmeasure(data,main_path, noise_levels):
 
         mean_line = group[['provider', 'noise_level', 'fmeasure']] \
             .groupby('noise_level') \
-            .mean() \
+            .mean(numeric_only=True) \
             .reset_index()
 
         ax = next(axes)
         # setup axis
-        plt.xlabel("noise levels")
+        plt.xlabel("noise level (%)")
         ax.set_ylabel("f-measure")
 
         ax.xaxis.label.set_fontsize(font_size)
@@ -156,7 +193,7 @@ def gen_result_plot_RQ1_fmeasure_drop(data, main_path, noise_levels):
 
         ax = next(axes)
         # setup axis
-        plt.xlabel("noise levels")
+        plt.xlabel("noise level (%)")
         ax.set_ylabel("f-measure drop")
 
         ax.xaxis.label.set_fontsize(font_size)
@@ -223,7 +260,7 @@ def gen_result_plot_RQ2_raw(data,main_path, noise_levels):
     for noise, group in df_rq2.groupby('noise_algorithm'):
         # setup axis
         fig, ax = plt.subplots()
-        plt.xlabel("noise levels")
+        plt.xlabel("noise level (%)")
         plt.ylabel("f-measure")
 
         ax.xaxis.label.set_fontsize(font_size_rq2)
