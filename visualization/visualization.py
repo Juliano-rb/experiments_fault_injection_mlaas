@@ -15,7 +15,7 @@ def plot_results(results_array, main_path, noise_list, percent_noise=True):
     other_plots_path = main_path + '/others_plots'
 
     latex.gen_raw_values_table(df, other_plots_path, percent_noise)
-    latex.gen_summary_table(df, other_plots_path, percent_noise)
+    talex, table = latex.gen_summary_table(df, other_plots_path, percent_noise)
 
     df['noise_level']= df['noise_level'].map(str)
 
@@ -24,6 +24,8 @@ def plot_results(results_array, main_path, noise_list, percent_noise=True):
 
     plots.save_confusion_matrix(df, other_plots_path)
     plots.save_results_plot(df, other_plots_path)
+
+    return table.set_properties(**{'font-size': '16pt'})
 
 def save_raw_results_json(results_array, main_path):
     Path(main_path).mkdir(parents=True, exist_ok=True)

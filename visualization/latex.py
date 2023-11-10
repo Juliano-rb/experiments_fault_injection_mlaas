@@ -63,11 +63,12 @@ def gen_summary_table(df: pd.DataFrame, main_path, percent_noise):
     df.index.names = [None, None]
     filename = main_path + f'/table_latex_rq2_summary.txt'
 
-    table_latex: str = df.style \
+    table = df.style \
         .background_gradient(cmap='RdYlGn', axis=None, low=0, high=1.0) \
         .set_properties(**{'font-size': '4px'}) \
         .format(precision=2) \
-        .applymap_index(lambda v: "font-weight: bold;", axis="index", level=0) \
+        .applymap_index(lambda v: "font-weight: bold;", axis="index", level=0)
+    table_latex: str = table \
         .to_latex(
             column_format='rr'+'r'*len(df.columns),
             position="h",
@@ -94,7 +95,7 @@ def gen_summary_table(df: pd.DataFrame, main_path, percent_noise):
     with open(filename, 'w+') as f:
         f.write(table_latex)
 
-    return table_latex
+    return table_latex, table
 
 def gen_raw_values_table(df: pd.DataFrame, main_path, percent_noise):
     Path(main_path).mkdir(parents=True, exist_ok=True)
