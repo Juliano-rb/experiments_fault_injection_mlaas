@@ -1,3 +1,8 @@
+# Running through Google Colab
+1. Open the jupyter notebook directly in Google colab: https://colab.research.google.com/github/evaluating-effectiveness-cloud-nlp/replication_package/blob/master/notebook_rq1.ipynb.
+2. Follow notebook instructions.
+
+# Running locally (not recomended)
 ## Prerequisites
 - `python 3`.
 - `pipenv` installed [``how to install``](https://pipenv.pypa.io/en/latest/#install-pipenv-today).
