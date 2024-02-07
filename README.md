@@ -1,3 +1,9 @@
+# Description
+This repository contains the experiment performed in my master's thesis.
+
+## Abstract
+Natural Language Processing (NLP) has revolutionized industries, streamlining customer service through applications in healthcare, finance, legal, and human resources domains, and simplifying tasks like medical research, financial analysis, and sentiment analysis. To avoid the high costs of building and maintaining NLP infrastructure, companies turn to Cloud NLP services offered by major cloud providers like Amazon, Google, and Microsoft. However, there is little knowledge about how effective these services are when subjected to noise. This paper presents a study that analyzes the effectiveness of Cloud NLP services by evaluating the resistant to noise of sentiment analysis services provided by Amazon, Google, and Microsoft when subjected to 12 types of noise, including syntactic and semantic noises. The findings indicate that Google is the most effective to syntactic noises, and Microsoft is the most effective to semantic noises. These findings may help developers and companies in selecting the most suitable service provider and shed light towards improving state-of-the-art techniques for effective cloud NLP services.
+
 # Running through Google Colab
 1. Open the jupyter notebook directly in Google colab: https://colab.research.google.com/github/evaluating-effectiveness-cloud-nlp/replication_package/blob/master/notebook_rq1.ipynb.
 2. Follow notebook instructions.
